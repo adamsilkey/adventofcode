@@ -5,3 +5,6 @@ __pycache__/
 
 # Virtual Environment
 venv/
+
+# Junky mac files
+*.DS_STORE
