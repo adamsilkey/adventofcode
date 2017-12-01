@@ -7,14 +7,11 @@ def part_one():
     sum = 0
 
     for subscript in range(pz_length):
-        if subscript != pz_length-1:
-            if puzzle_input[subscript] == puzzle_input[subscript+1]:
-                sum = sum + int(puzzle_input[subscript])
-        else:
-            if puzzle_input[subscript] == puzzle_input[0]:
-                sum = sum + int(puzzle_input[subscript])
-
+        if puzzle_input[subscript] == puzzle_input[(subscript+1) % pz_length]:
+            sum = sum + int(puzzle_input[subscript])
     print(sum)
+
+part_one()
 
 half_pz_length = pz_length // 2
 
