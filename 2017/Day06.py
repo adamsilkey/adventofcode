@@ -47,7 +47,12 @@ def day_06(inp):
 
     print(f'broken memory: {memory}')
     broke = [item for item in memory]
+    start = None
+    for idx, val in enumerate(unique):
+        if broke == val:
+            start = idx
 
+    print(f'part_two size: {len(unique) - start}')
     return loop
 
 assert(day_06([0,2,7,0])) == 5
