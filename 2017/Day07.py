@@ -81,6 +81,32 @@ def generate_total_weight(tower, disk):
             for child_disk in disk.other_disks:
                 disk.total_weight += tower[child_disk].total_weight
 
+def solve_two(inp):
+    tower = sort_tower(get_unsorted_tower(inp))
+    for name, disk in tower.items():
+        generate_total_weight(tower, disk)
+        #print(f'{disk.name}: {disk.total_weight}')
+
+    for name, disk in tower.items():
+        if disk.other_disks:
+            if (disk.total_weight - disk.weight) % len(disk.other_disks):
+                print(f"name: {disk.name}")
+                print(f"other disks: {disk.other_disks}")
+                print(f"total_weight: {disk.total_weight}")
+                print(f"weight: {disk.weight}")
+                print(f"modulo num: {len(disk.other_disks)}")
+
+                for child in disk.other_disks:
+                    print(f"{child}: {tower[child].weight}, {tower[child].total_weight}")
+                print()
+
+
+
+#assert(solve_two(test_inp) == 60)
+
+print(solve_two(inp))
+sys.exit()
+
 
 def solve(inp):
     tower = sort_tower(get_unsorted_tower(inp))
