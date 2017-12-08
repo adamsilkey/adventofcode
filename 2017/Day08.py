@@ -57,6 +57,7 @@ assert(condition_check(1, '>', 1) == False)
 def solve(inp):
     cpu = {}
     instructions = [Instruction(line) for line in inp]
+    highest_result = 0
     for instruction in instructions:
         if instruction.register not in cpu.keys():
             cpu[instruction.register] = 0
@@ -77,6 +78,8 @@ def solve(inp):
             elif instruction.modify == 'dec':
                 cpu[instruction.register] -= int(instruction.amount)
                 #print(f'dec: {instruction.amount}')
+            if cpu[instruction.register] > highest_result:
+                highest_result = cpu[instruction.register]
 
     reg_values = []
     for key, val in cpu.items():
@@ -85,6 +88,7 @@ def solve(inp):
 
     reg_values.sort()
 
+    print(f'max value: {highest_result}')
 
     #print(reg_values)
     return max(reg_values)
