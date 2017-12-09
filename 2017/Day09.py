@@ -16,6 +16,7 @@ def solve(inp, file_ = True):
     garbage = False
     ignore = False
     in_group = False
+    garbage_count = 0
     for idx, char in enumerate(inp):
         #print(f'before groups {groups}')
         #print(char)
@@ -37,15 +38,20 @@ def solve(inp, file_ = True):
                 #print(f'new count: {count}')
                 in_group = False
         if garbage:
+            garbage_count += 1
             print(char, garbage_count)
             if not ignore:
                 if char == '!':
                     ignore = True
+                    garbage_count -= 1
                 if char == '>':
                     garbage = False
+                    garbage_count -= 2
+                    print(garbage_count)
                     print('exiting garbage')
             else:
                 ignore = False
+                garbage_count -= 1
 
         #print(f'after groups {groups}')
         #print()
@@ -53,6 +59,7 @@ def solve(inp, file_ = True):
 
 
     print(count)
+    print(garbage_count)
     print()
     return count
 
