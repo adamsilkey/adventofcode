@@ -34,6 +34,9 @@ class HexGrid:
         self.instructions = [instruction for instruction in instructions.split(',')]
         self.grid = {(x,y,z): Hex(x,y,z)}
         self.pos = (x,y,z)
+        self.max_x = x
+        self.max_y = y
+        self.max_z = z
 
     def generate_grid(self):
         for ins in self.instructions:
@@ -44,6 +47,12 @@ class HexGrid:
             if new_pos not in self.grid:
                 self.grid[new_pos] = Hex(new_pos[0], new_pos[1], new_pos[2])
             self.pos = new_pos
+            if abs(self.pos[0]) > self.max_x:
+                self.max_x = abs(self.pos[0])
+            if abs(self.pos[0]) > self.max_y:
+                self.max_y = abs(self.pos[1])
+            if abs(self.pos[0]) > self.max_z:
+                self.max_z = abs(self.pos[2])
 
     def p(self):
         for instruction in self.instructions:
@@ -54,6 +63,7 @@ class HexGrid:
 def solve(inp):
     h = HexGrid(inp, 0, 0, 0)
     h.generate_grid()
+    print(h.max_x, h.max_y, h.max_z)
     print()
     return inp
 
