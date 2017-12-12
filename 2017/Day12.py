@@ -1,28 +1,16 @@
 # pylint: disable-all
 
-import sys
-
+from collections import deque
 
 def parse_input(filename):
     with open(filename) as f:
         dic = {}
         for line in f:
-            l = line.strip().split()
-            idx = l.pop(0)
-            l.pop(0)
-            l = ''.join(l)
-            l = [int(i) for i in l.split(',')]
-            dic[int(idx)] = l
+            l = deque(line.replace(',', '').strip().split())
+            idx = l.popleft()
+            l.popleft()
+            dic[int(idx)] = [int(i) for i in l]
         return dic
-
-'''
-def pipewalk(check_num, pipe_dict, pipe_list):
-    for i in pipe_dict[check_num]:
-        if i not in pipe_list:
-            pipe_list.append(i)
-            pipewalk(i, pipe_dict, pipe_list)
-'''
-
 
 def pipewalk(check_num, pipe_dict, pipe_list = None):
     if pipe_list is None:
@@ -34,32 +22,19 @@ def pipewalk(check_num, pipe_dict, pipe_list = None):
 
     return pipe_list
 
+def solve(pipe_dict):
 
-def solve(inp):
+    part_one = len(pipewalk(0, pipe_dict))
 
     pipegroups = []
-
-    while inp:
-        pipe = inp.popitem()
-        inp[pipe[0]] = pipe[1]
-        group = pipewalk(pipe[0], inp)
+    while pipe_dict:
+        pipe = pipe_dict.popitem()
+        pipe_dict[pipe[0]] = pipe[1]
+        group = pipewalk(pipe[0], pipe_dict)
         for key in group:
-            del inp[key]
+            del pipe_dict[key]
         pipegroups.append(group)
 
+    return part_one, len(pipegroups)
 
-    print(pipegroups)
-    print(len(pipegroups))
-
-    #pipewalk(0, inp, pipelist)
-
-
-
-    print(pipelist)
-    print(len(pipelist))
-    return inp
-
-
-#sys.exit()
-solve(parse_input('input.txt'))
-
+print(solve(parse_input('input.txt')))
