@@ -9,10 +9,11 @@ def main_test():
         FabricClaim.from_claimstring('#3 @ 5,5: 2x2'),
     ]
 
-    overlapped_inches, master_fabric = find_overlapped_inches(fabric_claims, 8, 8)
+    overlapped_inches, master_fabric, overlapping_claims = find_overlapped_inches(fabric_claims, 8, 8)
     print(overlapped_inches)
     for line in master_fabric:
         print(line)
+    print(sorted(overlapping_claims))
 
 
 def main():
@@ -30,16 +31,16 @@ def main():
 
     print(f"x: {biggest_x}, y: {biggest_y}")
 
-    overlapped_inches, master_fabric = find_overlapped_inches(fabric_claims, biggest_x, biggest_y)
+    overlapped_inches, master_fabric, overlapping_claims = find_overlapped_inches(fabric_claims, biggest_x, biggest_y)
 
-    for line in master_fabric:
-        print(line)
-    
     print(f"overlapped inches: {overlapped_inches}")
+    claims = set([claim.cid for claim in fabric_claims])
+    print(claims - overlapping_claims)
 
 def find_overlapped_inches(fabric_claims, x, y):
     master_fabric = [[[] for x in range(x)] for i in range(y)]
     overlapped_inches = 0
+    overlapping_claims = set()
     for claim in fabric_claims:
         # Remember that it's masterfabric[row/y][column/x]
         for x in range(claim.width):
@@ -50,8 +51,11 @@ def find_overlapped_inches(fabric_claims, x, y):
                 # if this is > 2, it will double count, so we only care about the first time that the fabric overlaps
                 if len(master_fabric[y_coord][x_coord]) == 2:
                     overlapped_inches += 1
-    
-    return overlapped_inches, master_fabric
+                if len(master_fabric[y_coord][x_coord]) > 1:
+                    for cid in master_fabric[y_coord][x_coord]:
+                        overlapping_claims.add(cid)
+
+    return overlapped_inches, master_fabric, overlapping_claims
 
 
 @dataclass
@@ -111,5 +115,5 @@ class FabricClaim:
         return intersection
 
 if __name__ == '__main__':
-    #main_test()
+    # main_test()
     main()
