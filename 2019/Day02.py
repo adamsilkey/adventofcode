@@ -29,6 +29,7 @@ class IntcodeComputer:
         #print(self.intcodes)
         return self.intcodes
 
+
     def add(self, pos, intcodes=None):
         if intcodes is None:
             intcodes = self.intcodes
@@ -36,6 +37,7 @@ class IntcodeComputer:
         b_position = intcodes[pos+2]
         result_position = intcodes[pos+3]
         intcodes[result_position] = intcodes[a_position] + intcodes[b_position]
+
 
     def multiply(self, pos, intcodes=None):
         if intcodes is None:
@@ -59,7 +61,7 @@ def tests():
     import sys; sys.exit()
 
 
-def daytwo_partone():
+def p1solver():
     intcode_program[1] = 12
     intcode_program[2] = 2
 
@@ -67,5 +69,26 @@ def daytwo_partone():
     cpu.run()
     print(cpu.intcodes[0])
 
-daytwo_partone()
 
+def p2solver(noun, verb):
+    intcode_program[1] = noun
+    intcode_program[2] = verb
+    cpu = IntcodeComputer(intcode_program)
+    cpu.run()
+    return cpu.intcodes[0]
+
+
+def p2finder(target):
+    for noun in range(100):
+        for verb in range(100):
+            val = p2solver(noun,verb)
+            print(noun, verb, val)
+            if val == target:
+                print("FOUND IT!!!!")
+                checksum = 100 * noun + verb
+                print(f"checksum: {checksum}")
+                return noun, verb, val, checksum
+
+
+target = 19690720
+print(p2finder(target))
