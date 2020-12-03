@@ -1,21 +1,17 @@
 #! /usr/bin/env python3
 
+import sys
+
 print("day 3")
 
 with open("input/2020-03.in") as f:
     day3 = [line.strip() for line in f]
 
-trees = []
-
-for line in day3:
-    trees.append([c for c in line])
-    for i in range(90):
-        for c in line:
-            trees[-1].append(c)
+trees = [line * 90 for line in day3]
 
 tree = "#"
 
-a, b, c, d, e = 0, 0, 0, 0, 0
+a = b = c = d = e = 0
 
 try:
     for idx, line in enumerate(trees):
@@ -33,7 +29,7 @@ try:
 
 except IndexError:
     print("treeline not big enough")
-    pass
+    exit()
 
 print(f"Part One: {b}")
 print(f"Part Two: {(a,  b, c, d, e)}")
