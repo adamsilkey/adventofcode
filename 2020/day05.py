@@ -5,24 +5,20 @@ print("day 5")
 with open("input/2020-05.in") as f:
     day5 = [line.strip() for line in f]
 
-ROWS = 128
-COLUMNS = 8
+# ROWS = 128
+# COLUMNS = 8
 
-def get_row(seat_id):
+
+def get_row(boarding_pass):
     upper = 127
     lower = 0
-    rows = seat_id[0:7]
-    print(rows)
-
-    for idx, c in enumerate(rows):
+    for idx, c in enumerate(boarding_pass[:7]):
         if idx < 6:
-
             tmp = (upper - lower) // 2
             if c == "F":
                 upper = lower + tmp
             elif c == "B":
                 lower = lower + tmp + 1
-            # print(f"{c} {lower} - {upper} || {tmp}")
         else:
             if c == "F":
                 return lower
@@ -49,7 +45,6 @@ def get_column(seat_id):
 
 
 highest = 0
-
 all_seats = []
 
 for seat in day5:
@@ -58,16 +53,10 @@ for seat in day5:
 
     id_ = (row * 8) + col
     all_seats.append(id_)
-    if id_ > highest:
-        highest = id_
 
-print(f"part_one {highest}")
-print(sorted(all_seats))
+print(f"part_one {max(all_seats)}")
 
-for i in range(46, 992):
+for i in range(min(all_seats), max(all_seats) + 1):
     if i not in all_seats:
-        print(i)
+        print(f"part_two {i}")
         break
-
-
-
