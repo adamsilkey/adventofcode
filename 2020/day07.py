@@ -21,7 +21,18 @@ faded blue bags contain no other bags.
 dotted black bags contain no other bags.
 """.strip().split("\n")
 
+part_two_test_data = """
+shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.
+""".strip().split("\n")
+
 test_data = [line.split() for line in test_data]
+part_two_test_data = [line.split() for line in part_two_test_data]
 
 
 def generate_bag_rules(raw_data):
@@ -43,21 +54,26 @@ def generate_bag_rules(raw_data):
 
 
 # bags = generate_bag_rules(test_data)
-# for bag, v in bags.items():
-#     print(bag, v)
 
+# bags = generate_bag_rules(part_two_test_data)
+#
 bags = generate_bag_rules(day7)
 
 
-def get_bag_contents(bag_list: dict, outer_bag: str, contents: dict):
+def get_bag_contents(bag_list: dict, outer_bag: str, contents: dict, factor=1):
     for bag in bag_list[outer_bag]:
+        qty = bag_list[outer_bag][bag]
         if bag not in contents:
-            contents[bag] = bag_list[outer_bag][bag]
-        else:
-            contents[bag] += bag_list[outer_bag][bag]
+            contents[bag] = 0
+        contents[bag] += qty * factor
 
         if bag_list[bag]:
-            get_bag_contents(bag_list, bag, contents)
+            get_bag_contents(bag_list, bag, contents, qty * factor)
+
+
+        # if bag_list[bag]:
+        #     for _ in range(bag_list[outer_bag][bag]):
+        #         get_bag_contents(bag_list, bag, contents)
 
     return contents
 
@@ -77,6 +93,14 @@ for bag in all_bags:
 
 print(f"part one: {shinygold}")
 
+shiny_contents = get_bag_contents(bags, "shinygold", {})
+
+sum = 0
+for q in shiny_contents.values():
+    sum += q
+
+
+print(f"part two: {sum}")
 
 
 '''
