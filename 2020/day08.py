@@ -15,8 +15,6 @@ def generate_instructions(data):
     instructions = []
     for idx, line in enumerate(data):
         move, value = line.split()
-        if value.startswith("+"):
-            value = value[1:]
         value = int(value)
         instructions.append(Instruction(idx, move, value))
 
@@ -26,22 +24,17 @@ def generate_instructions(data):
 def runner(instructions: List[Instruction]):
     acc = 0
     line = 0
-    seen = {}
-    while True:
-        # Have we run out of instructions? If so, we break
-        if line >= len(instructions):
-            valid = True
-            break
-
+    seen = set()
+    valid = True
+    while line < len(instructions):
         # Get instruction based on our current line number
         ins = instructions[line]
 
         # Have we seen this instruction before? If so, we break
-        if ins not in seen:
-            seen[ins] = 1
-        else:
+        if ins in seen:
             valid = False
             break
+        seen.add(ins)
 
         # Handle instructions
         if ins.ins == "nop":
@@ -52,7 +45,7 @@ def runner(instructions: List[Instruction]):
             acc += ins.value
             line += 1
         else:
-            raise ValueError(f"Invalid instruction in set {ins.ins}")
+            raise ValueError(f"Invalid instruction in set {ins}")
 
     Result = namedtuple("Result", "acc valid")
 
@@ -105,4 +98,3 @@ acc +6
 """.strip().split("\n")
 test1 = generate_instructions(part_one_test)
 test2 = generate_instructions(part_two_test)
-
