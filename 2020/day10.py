@@ -5,7 +5,11 @@ from itertools import combinations
 print("day 10")
 
 with open("input/2020-10.in") as f:
-    day9 = [line.strip() for line in f]
+    # day9 = [line.strip() for line in f]
+    day9 = f.readlines()
+for line in day9:
+    print(repr(line))
+
 
 
 def parse_data(data):
@@ -14,12 +18,12 @@ def parse_data(data):
 
 def jolt_chain(adapters: list):
     adapters.append(0)
-    adapters.append(max(adapters)+3)
     adapters.sort()
+    adapters.append(adapters[-1] + 3)
     jolts = {1: 0, 2: 0, 3: 0}
 
     chain = 1
-    chain_list = []
+    total_paths = 1
 
     for idx, jolt in enumerate(adapters):
         if idx + 1 == len(adapters):
@@ -30,27 +34,16 @@ def jolt_chain(adapters: list):
         if jolt_difference == 1:
             chain += 1
         else:
-            chain_list.append(chain)
+            if chain == 3:
+                total_paths *= 2
+            elif chain == 4:
+                total_paths *= 4
+            elif chain == 5:
+                total_paths *= 7
             chain = 1
 
-    print(adapters)
-    print(chain_list)
-    print(f"{max(chain_list)=}")
-    
-    combs = 1
-    for chain in chain_list:
-        if chain == 3:
-            combs *= 2
-        elif chain == 4:
-            combs *= 4
-        elif chain == 5:
-            combs *= 7
-
-        
-
     print(f"day10 part_one: {jolts[1] * jolts[3]}")
-    print(f"{jolts}")
-    print(f"day 10 part two : {combs}")
+    print(f"day 10 part two : {total_paths}")
 
 
 jolt_chain(parse_data(day9))
