@@ -21,4 +21,14 @@ for box in boxes:
     paper_needed = (box.l * box.w, box.l * box.h, box.w * box.h)
     wrapping_paper += sum(paper_needed) * 2 + min(paper_needed)
 
-print(print(f"Part 1: {wrapping_paper}")
+print(f"Part 1: {wrapping_paper}")
+
+ribbon_needed = 0
+for box in boxes:
+    volume = box.l * box.w * box.h
+    box = list(box)
+    box.sort()
+
+    ribbon_needed += volume + 2 * sum(box[:2])
+
+print(f"Part 2: {ribbon_needed}")
