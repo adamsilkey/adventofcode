@@ -31,24 +31,10 @@ class VentMap:
         self.lines = []
 
     def make_line(self, line: Line, allow_diagonal):
-        line_length = abs(line.x1 - line.x2)
-        is_diagonal = True
-        if line.x1 < line.x2:
-            dx = 1
-        elif line.x1 > line.x2:
-            dx = -1
-        else:   # equal
-            dx = 0
-            line_length = abs(line.y1 - line.y2)
-            is_diagonal = False
-        
-        if line.y1 < line.y2:
-            dy = 1
-        elif line.y1 > line.y2:
-            dy = -1
-        else:   # equal
-            dy = 0
-            is_diagonal = False
+        line_length = abs(line.x1 - line.x2) or abs(line.y1 - line.y2)
+        is_diagonal = False if (line.x1 == line.x2 or line.y1 == line.y2) else True
+        dx = 1 if line.x1 < line.x2 else -1 if line.x1 > line.x2 else 0
+        dy = 1 if line.y1 < line.y2 else -1 if line.y1 > line.y2 else 0
 
         if not allow_diagonal and is_diagonal:
             return
