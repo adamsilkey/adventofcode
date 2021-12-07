@@ -27,13 +27,8 @@ for i in ll:
 
 print(f"Part 1: {total}")
 
-average = sum(ll)/len(ll)
-average = round(average)
-# print(average)
-options = [average, average + 1, average - 1]
-
-# average = 458 #92439832
-# average = 457
+average = round(sum(ll)/len(ll))
+options = [average + i for i in range(-1,2)]
 
 potentials = []
 for ave in options:
