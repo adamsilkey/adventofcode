@@ -86,18 +86,6 @@ def parse_display_line(line: str):
 
     return DisplayLine(signal.strip().split(), output.strip().split())
 
-def parse_input(filename):
-    ll = load_lines(filename)
-
-    displays = []
-
-    for line in ll:
-        displays.append(parse_display_line(line))
-
-    return(displays)
-    
-
-displays = parse_input(filename)
 
 #### Digit Mapping
 ##   1 -     c     f     - 2
@@ -226,23 +214,52 @@ def decode(line: DisplayLine):
 
 
 TEST_LINE = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"
-display_line = parse_display_line(TEST_LINE)
+test_display_line = parse_display_line(TEST_LINE)
 # print(display_line)
 
-decode(display_line)
+# print(decode(display_line))
+
+
+def convert_output(output, decode_dict):
+    # Sort our items. There's a better place to do this but we're just trying to get the solve
+    # for this first run
+    decode_dict = {''.join(sorted(k)): v for k,v in decode_dict.items()}
+    output = [''.join(sorted(s)) for s in output]
+    result = (
+        decode_dict[output[0]] * 1000 +
+        decode_dict[output[1]] * 100 +
+        decode_dict[output[2]] * 10 +
+        decode_dict[output[3]] * 1
+    )
+
+    return result
+
+
+def process_line(line: DisplayLine):
+
+    return convert_output(line.output, decode(line))
+
+# print(process_line(test_display_line))
 
 
 
 
+def parse_input(filename):
+    ll = load_lines(filename)
 
+    displays = []
 
+    for line in ll:
+        displays.append(parse_display_line(line))
 
+    return(displays)
+    
 
+displays = parse_input(filename)
 
+total = sum(process_line(display) for display in displays)
 
-
-
-
+print(f"p2: {total}")
 
 
 
