@@ -72,7 +72,7 @@ for row in ll:
 
 def look_around(num, x, y, caves):
     values = []
-    print(f"{num=} {x=} {y=}")
+    # print(f"{num=} {x=} {y=}")
 
     # Above
     if y < len(caves) - 1:
@@ -91,7 +91,7 @@ def look_around(num, x, y, caves):
         if num >= val:
             return 0
     else: # no break
-        print(f"found one: {num} {values}")
+        # print(f"found one: {num} {values}")
         return num + 1
 
 
@@ -101,4 +101,67 @@ for y, row in enumerate(caves):
     for x, height in enumerate(row):
         total += look_around(height, x, y, caves)
 
-print(total)
+print(f"p1: {total}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def traverse_the_basin(caves, x, y, seen):
+    # print(f"{num=} {x=} {y=}")
+
+    if (x,y) == 9:
+        return
+
+    here = (x,y)
+
+    if here in seen:
+        return
+
+    seen.add(here)
+
+    # Above
+    if y < len(caves) - 1:
+        if caves[y + 1][x + 0] != 9:
+            traverse_the_basin(caves, x+0, y+1, seen)
+    # Below
+    if y > 0:
+        if caves[y - 1][x + 0] != 9:
+            traverse_the_basin(caves, x+0, y-1, seen)
+    # Left
+    if x < len(caves[0]) - 1:
+        if caves[y + 0][x + 1] != 9:
+            traverse_the_basin(caves, x+1, y+0, seen)
+    # Right
+    if x > 0:
+        if caves[y - 0][x - 1] != 9:
+            traverse_the_basin(caves, x-1, y-0, seen)
+
+    return
+
+
+
+seen = set()
+
+basin_sizes = [0]
+for y, row in enumerate(caves):
+    for x, height in enumerate(row):
+        if caves[y][x] == 9:
+            continue
+        traverse_the_basin(caves, x, y, seen)
+        size = len(seen) - sum(basin_sizes)
+        basin_sizes.append(size)
+
+
+print(sorted(basin_sizes))
