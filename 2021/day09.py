@@ -4,6 +4,7 @@ YEAR = '2021'
 AOC_DAY = '09'
 
 import itertools as it
+import math
 import sys
 from collections import Counter, defaultdict, deque
 from dataclasses import dataclass
@@ -104,64 +105,40 @@ for y, row in enumerate(caves):
 print(f"p1: {total}")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def traverse_the_basin(caves, x, y, seen):
-    # print(f"{num=} {x=} {y=}")
-
-    if (x,y) == 9:
-        return
 
     here = (x,y)
 
-    if here in seen:
-        return
+    if caves[y][x] == 9 or here in seen:
+        return 0
 
     seen.add(here)
+    basin_size = 1
 
     # Above
-    if y < len(caves) - 1:
-        if caves[y + 1][x + 0] != 9:
-            traverse_the_basin(caves, x+0, y+1, seen)
+    if y < len(caves) - 1 and caves[y + 1][x + 0] != 9:
+            basin_size += traverse_the_basin(caves, x+0, y+1, seen)
     # Below
-    if y > 0:
-        if caves[y - 1][x + 0] != 9:
-            traverse_the_basin(caves, x+0, y-1, seen)
+    if y > 0 and caves[y - 1][x + 0] != 9:
+            basin_size += traverse_the_basin(caves, x+0, y-1, seen)
     # Left
-    if x < len(caves[0]) - 1:
-        if caves[y + 0][x + 1] != 9:
-            traverse_the_basin(caves, x+1, y+0, seen)
+    if x < len(caves[0]) - 1 and caves[y + 0][x + 1] != 9:
+            basin_size += traverse_the_basin(caves, x+1, y+0, seen)
     # Right
-    if x > 0:
-        if caves[y - 0][x - 1] != 9:
-            traverse_the_basin(caves, x-1, y-0, seen)
+    if x > 0 and caves[y - 0][x - 1] != 9:
+            basin_size += traverse_the_basin(caves, x-1, y-0, seen)
 
-    return
-
+    return basin_size
 
 
 seen = set()
+basin_sizes = []
 
-basin_sizes = [0]
 for y, row in enumerate(caves):
-    for x, height in enumerate(row):
-        if caves[y][x] == 9:
-            continue
-        traverse_the_basin(caves, x, y, seen)
-        size = len(seen) - sum(basin_sizes)
-        basin_sizes.append(size)
+    for x, _ in enumerate(row):
+        if size := traverse_the_basin(caves, x, y, seen):
+            basin_sizes.append(size)
 
+result = math.prod(sorted(basin_sizes)[-3:])
 
-print(sorted(basin_sizes))
+print(f"P2: {result}")
