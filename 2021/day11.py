@@ -2,13 +2,9 @@
 
 YEAR = '2021'
 AOC_DAY = '11'
-DEBUG = True
 
-import itertools as it
 import sys
-from collections import Counter, defaultdict, deque, namedtuple
-from dataclasses import dataclass
-from enum import Enum
+from collections import namedtuple
 
 if not (YEAR and AOC_DAY):
     print("!!! Set YEAR/AOC_DAY")
@@ -40,6 +36,7 @@ print(f"=" * len(title))
 print(title)
 print(f"=" * len(title))
 
+
 def load_file(filename: str) -> str:
     """Loads an AOC file, returns a string"""
 
@@ -47,33 +44,7 @@ def load_file(filename: str) -> str:
         return f.read().rstrip("\n")
 
 
-def load_lines(filename: str) -> list[str]:
-    """Returns a list of lines"""
-
-    return load_file(filename).split("\n")
-
-
-def load_ints(filename: str) -> list[int]:
-    """Returns a list of ints"""
-
-    return [int(i) for i in load_lines(filename)]
-
-
-def load_comma_separated_ints(filename: str) -> list[int]:
-    """Returns a list of ints from a comma separated list of ints"""
-
-    return [int(i) for i in load_file(filename).strip().split(",")]
-
-
-
 ll = load_file(filename)
-
-
-
-
-
-
-
 
 Point = namedtuple("Point", ["x", "y"])
 
@@ -172,47 +143,13 @@ class OctopusCavern:
         return flashed_total
 
 
-
-
 p1 = OctopusCavern(ll)
-
 print(f"p1: {p1.simulate(100)}")
 
 p2 = OctopusCavern(ll)
-
 counter = 0
 while True:
     counter += 1
     if p2.cycle() == 100:
         print(f"p2: {counter}")
         break
-
-
-import sys;sys.exit()
-#### Test data
-
-p1_test = '''
-11111
-19991
-19191
-19991
-11111
-'''.strip()
-
-p1_test = '''
-284
-257
-589
-'''
-
-def part1_test(p1_test):
-
-    p1_test = OctopusCavern(p1_test)
-
-    p1_test.print()
-    p1_test.cycle(pprint=True, )
-    p1_test.cycle(pprint=True)
-
-# part1_test(p1_test)
-
-# import sys;sys.exit()
