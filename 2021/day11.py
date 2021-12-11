@@ -105,16 +105,14 @@ class OctopusCavern:
 
         return self.grid[pt.y][pt.x] > 9
 
-    def step_one(self, debug=False):
+    def step_one(self):
         # First, the energy level of each octopus increases by 1
         for y, row in enumerate(self.grid):
             for x, _ in enumerate(row):
                 self.increment(Point(x, y))
-        if debug: self.print()
-        if debug: input()
 
     # Step Two
-    def flash(self, pt: Point, flashed: set, debug=False):
+    def flash(self, pt: Point, flashed: set):
 
         if pt in flashed:
             return flashed
@@ -123,36 +121,22 @@ class OctopusCavern:
 
         for d in directions.values():
             adjacent = Point(pt.x + d.x, pt.y + d.y)
-            if debug: print(adjacent)
-            if self.inbounds(adjacent) and self.increment(adjacent): # and adjacent not in flashed:
-                if debug: print("Flashing")
-                # ESTUPIDO ------> self.flash(pt, flashed, debug)
-                self.flash(adjacent, flashed, debug)
-            elif debug:
-                print(f"{self.inbounds(adjacent)=}")
-                if self.inbounds(adjacent):
-                    self.print()
-                input()
-
-            
+            if self.inbounds(adjacent) and self.increment(adjacent): 
+                self.flash(adjacent, flashed)
 
         return flashed
 
-    def step_two(self, debug = False) -> int:
+    def step_two(self) -> int:
         flashed = set()
         for y, row in enumerate(self.grid):
             for x, i in enumerate(row):
-                if debug: print(Point(x,y), i)
-                if debug: self.print()
-                if debug: input()
                 if i > 9:
-                    if debug: print("flash")
-                    flashed = self.flash(Point(x,y), flashed, debug)
+                    flashed = self.flash(Point(x,y), flashed)
 
         return len(flashed)
 
     # Step Three
-    def step_three(self, debug=False):
+    def step_three(self):
         for y, row in enumerate(self.grid):
             for x, i in enumerate(row):
                 if i > 9:
@@ -163,22 +147,17 @@ class OctopusCavern:
             for x, i in enumerate(row):
                 if i > 9:
                     i = ' '
-                    #  raise ValueError(f"{i} is too high! Coordinate: ({x},{y})")
                 print(i, end='')
             print()
         
-        # Make a new line to demarcate the end of the grid
-        print()
+        print()  # Make a new line to demarcate the end of the grid
 
-    def cycle(self, pprint=False, debug1=False, debug2=False, debug3=False):
-        if debug1: print("Step One:")
-        self.step_one(debug1)
+    def cycle(self, pprint=False):
+        self.step_one()
 
-        if debug2: print("Step Two:")
-        flashed_total = self.step_two(debug2)
+        flashed_total = self.step_two()
 
-        if debug3: print("Step Three:")
-        self.step_three(debug3)
+        self.step_three()
 
         if pprint:
             self.print()
@@ -193,6 +172,24 @@ class OctopusCavern:
         return flashed_total
 
 
+
+
+p1 = OctopusCavern(ll)
+
+print(f"p1: {p1.simulate(100)}")
+
+p2 = OctopusCavern(ll)
+
+counter = 0
+while True:
+    counter += 1
+    if p2.cycle() == 100:
+        print(f"p2: {counter}")
+        break
+
+
+import sys;sys.exit()
+#### Test data
 
 p1_test = '''
 11111
@@ -219,16 +216,3 @@ def part1_test(p1_test):
 # part1_test(p1_test)
 
 # import sys;sys.exit()
-
-p1 = OctopusCavern(ll)
-
-print(f"p1: {p1.simulate(100)}")
-
-p2 = OctopusCavern(ll)
-
-counter = 0
-while True:
-    counter += 1
-    if p2.cycle() == 100:
-        print(f"p2: {counter}")
-        break
