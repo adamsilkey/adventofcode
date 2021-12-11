@@ -98,10 +98,7 @@ class OctopusCavern:
         self.dimension = len(self.grid)
 
     def inbounds(self, point: Point):
-        if 0 <= point.x < self.dimension and 0 <= point.y < self.dimension:
-            return True
-        else:
-            return False
+        return 0 <= point.x < self.dimension and 0 <= point.y < self.dimension
     
     def increment(self, pt: Point) -> bool:
         self.grid[pt.y][pt.x] += 1
