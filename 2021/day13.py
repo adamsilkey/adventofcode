@@ -109,9 +109,33 @@ def fold(grid: set(), fold: Fold):
         print(dot)
         new_grid.add(dot)
 
-    return new_grid
+    return max_x, max_y, new_grid
 
 
-print(len(grid))
-grid = fold(grid, folds[0])
-print(len(grid))
+# Part 1
+# print(len(grid))
+# grid = fold(grid, folds[0])
+# print(len(grid))
+
+
+# Part 2
+for one_fold in folds:
+    max_x, max_y, grid = fold(grid, one_fold)
+
+print(len(grid), max_x, max_y)
+
+p2 = []
+for y in range(max_y + 1):
+    p2.append(['.' for x in range(max_x + 1)])
+
+# for row in p2:
+#     print(''.join(row))
+
+for dot in grid:
+    p2[dot.y][dot.x] = '#'
+
+
+for row in p2:
+    print(''.join(row))
+
+
