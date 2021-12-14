@@ -5,7 +5,7 @@ AOC_DAY = ''
 
 import itertools as it
 import sys
-from collections import Counter, defaultdict, deque
+from collections import Counter, defaultdict, deque, namedtuple
 from dataclasses import dataclass
 
 if not (YEAR and AOC_DAY):
@@ -56,8 +56,56 @@ def load_ints(filename: str) -> list[int]:
 
     return [int(i) for i in load_lines(filename)]
 
+
 def load_comma_separated_ints(filename: str) -> list[int]:
     """Returns a list of ints from a comma separated list of ints"""
 
     return [int(i) for i in load_file(filename).strip().split(",")]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if test:
+    print()
+    print("============ This was a test!!!! ============")
+else:
+    print()
+    print("You just ran that production data. Nice work!")
