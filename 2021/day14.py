@@ -45,63 +45,78 @@ def load_file(filename: str) -> str:
         return f.read().rstrip("\n")
 
 
-# Rule = namedtuple("Rule", ["pair", "element"])
+def puzzle_input(filename):
+
+    template, raw_rules = load_file(filename).split("\n\n")
+    template = template.strip()
+    rules = {}
+    for rule in raw_rules.splitlines():
+        pair, element = rule.split(" -> ")
+        rules[pair] = element
+
+    return template, rules
 
 
-template, raw_rules = load_file(filename).split("\n\n")
-template = template.strip()
-rules = {}
-for rule in raw_rules.splitlines():
-    pair, element = rule.split(" -> ")
-    rules[pair] = element
+def part_one_like_a_brute(template, rules):
+
+    # part 1
+    for _ in range(10):
+        new_template = f'{template[0]}'
+        for i, c in enumerate(template[:-1]):
+            pair = f"{c}{template[i+1]}"
+            if pair in rules:
+                pair = f"{c}{rules[pair]}{template[i+1]}"
+
+            new_template += pair[1:]
+            # print(pair, new_template)
+
+        template = new_template
+        # print(i, template)
 
 
-# part 1
-for _ in range(10):
-    new_template = f'{template[0]}'
+    p1 = Counter(template)
+    most = p1.most_common()[0]
+    least = p1.most_common()[-1]
+
+    print(f"p1: {most} - {least} = {most[1] - least[1]}")
+
+
+def part_two_so_elegant(template, rules):
+
+    pairs = Counter()
     for i, c in enumerate(template[:-1]):
-        pair = f"{c}{template[i+1]}"
-        if pair in rules:
-            pair = f"{c}{rules[pair]}{template[i+1]}"
+        pairs[f"{c}{template[i+1]}"] += 1
 
-        new_template += pair[1:]
-        # print(pair, new_template)
+    for _ in range(40):
+        new_pairs = Counter()
+        for pair in pairs:
+            count = pairs[pair]
+            new_pairs.update({f"{pair[0]}{rules[pair]}": count})
+            new_pairs.update({f"{rules[pair]}{pair[1]}": count})
 
-    template = new_template
-    # print(i, template)
+        pairs = new_pairs
 
+    all_the_single_letters = Counter()
 
-p1 = Counter(template)
-print(p1)
-
-
-pairs = Counter()
-for i, c in enumerate(template[:-1]):
-    pairs[f"{c}{template[i+1]}"] += 1
-
-print(pairs)
-
-for _ in range(40):
-    new_pairs = Counter()
     for pair in pairs:
-        count = pairs[pair]
-        new_pairs.update({f"{pair[0]}{rules[pair]}": count})
-        new_pairs.update({f"{rules[pair]}{pair[1]}": count})
+        # Add every second character, or else you'll get double results
+        all_the_single_letters.update({pair[1]: pairs[pair]})
 
-    pairs = new_pairs
+    # Add on the very first letter
+    all_the_single_letters[template[0]] += 1
 
-    # print(pairs)
-    # input()
+    most = all_the_single_letters.most_common()[0]
+    least = all_the_single_letters.most_common()[-1]
 
-single_latters = Counter()
+    print(f"p2: {most} - {least} = {most[1] - least[1]}")
 
-for pair in pairs:
-    # single_latters.update({pair[0]: pairs[pair]})
-    single_latters.update({pair[1]: pairs[pair]})
 
-single_latters[template[0]] += 1
+template, rules = puzzle_input(filename)
+part_one_like_a_brute(template, rules)
+part_two_so_elegant(template, rules)
 
-print(single_latters)
 
-# print(Counter('NBBBCNCCNBBNBNBBCHBHHBCHB'))
-# print(Counter('NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB'))
+
+if test:
+    print()
+    print("============ This was a test!!!! ============")
