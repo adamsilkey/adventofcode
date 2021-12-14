@@ -51,22 +51,6 @@ def load_lines(filename: str) -> list[str]:
     return load_file(filename).split("\n")
 
 
-
-
-# class Node:
-#     def __init__(self, name: str):
-#         self.name = name
-#         self.links = set()
-#         self.small = self.name.islower()   # all lowercase - small | all uppercase - big
-
-#     def __str__(self):
-#         return f"{self.name}: {self.links}"
-
-#     def __hash__(self):
-#         return hash(self.name)
-
-
-
 def parse_input(lines):
 
     cavern_map = {}
@@ -86,10 +70,6 @@ def parse_input(lines):
 
 ll = parse_input(load_lines(filename))
 
-# for node, links in ll.items():
-#     print(node, links)
-
-
 
 def find_all_paths2(cavern_map, node=None, current_path=None, found_paths=None):
     if node is None:
@@ -101,66 +81,35 @@ def find_all_paths2(cavern_map, node=None, current_path=None, found_paths=None):
     if current_path is None:
         current_path = []
 
-
-    # Don't go visiting if we've already been to this small cave
+    # Stupid silly part 2 rules
     if node.islower() and node in current_path:
         if node in ['start', 'end']:
             return current_path, found_paths
         else:
-            # current_path.append(node)
-
             counts = Counter([lower_node for lower_node in current_path if lower_node.islower()])
-            # print(counts)
-            # input()
-            most_common = counts.most_common(2)
-            total = 0
-            for elem in most_common:
-                total += elem[1]
+            total = sum(elem[1] for elem in counts.most_common(2))
             if total > 2:
                 return current_path, found_paths
-            # else:
-            #     for next_node in cavern_map[node]:
-            #         current_path, found_paths = find_all_paths2(cavern_map, next_node, current_path, found_paths)
 
-    # print(current_path)
     current_path.append(node)
 
     if node == 'end':
-        print(f"found the end: {current_path}")
-        found_paths.append(','.join(current_path))   # Can't just append the list, because it's constantly getting eaten
+        # Can't just append the list, because it's constantly getting eaten
+        found_paths.append(','.join(current_path))
         current_path.pop()
         return current_path, found_paths
 
     for next_node in cavern_map[node]:
-        current_path, found_paths = find_all_paths2(cavern_map, next_node, current_path, found_paths)
+        # don't forget to rename your internal recursive functions when doing copy-paste
+        current_path, found_paths = find_all_paths2(cavern_map, next_node, current_path, found_paths)  
 
     current_path.pop()
     
     return current_path, found_paths
 
-# map_test1 = {"start": ["end"], "end": ["start"]}
-# _, paths = find_all_paths(map_test1)
-# print(paths)
 
-# map_test2 = {"start": ["A"], "A": ["end"], "end":["A"]}
-# _, paths = find_all_paths(map_test2)
-# print(paths)
-    
 _, paths = find_all_paths2(ll)
-print(paths)
 print(f"p2: {len(paths)}")
-
-import sys;sys.exit()
-
-
-
-
-
-
-
-
-
-
 
 
 def find_all_paths(cavern_map, node=None, current_path=None, found_paths=None):
@@ -173,19 +122,16 @@ def find_all_paths(cavern_map, node=None, current_path=None, found_paths=None):
     if current_path is None:
         current_path = []
 
-    # if node == 'start' and len(current_path) > 1:
-    #     return current_path, found_paths
-
     # Don't go visiting if we've already been to this small cave
     if node.islower() and node in current_path:
         return current_path, found_paths
 
     current_path.append(node)
-    # print(current_path)
 
     if node == 'end':
         print(f"found the end: {current_path}")
-        found_paths.append(','.join(current_path))   # Can't just append the list, because it's constantly getting eaten
+        # Can't just append the list, because it's just one referenced list
+        found_paths.append(','.join(current_path))
         current_path.pop()
         return current_path, found_paths
 
@@ -195,20 +141,11 @@ def find_all_paths(cavern_map, node=None, current_path=None, found_paths=None):
     current_path.pop()
     
     return current_path, found_paths
-
-# map_test1 = {"start": ["end"], "end": ["start"]}
-# _, paths = find_all_paths(map_test1)
-# print(paths)
-
-# map_test2 = {"start": ["A"], "A": ["end"], "end":["A"]}
-# _, paths = find_all_paths(map_test2)
-# print(paths)
     
+
 _, paths = find_all_paths(ll)
-print(paths)
 print(len(paths))
 
-# import sys;sys.exit()
 
 
 
