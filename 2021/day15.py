@@ -96,7 +96,6 @@ def load_puzzle(filename):
     return check_next, distances, not_visited, graph, inbounds
 
 
-check_next, distances, not_visited, graph, inbounds = load_puzzle(filename)
 
 
 def determine_shortest(node: Node, distances: dict, not_visited: set, graph, inbounds):
@@ -140,73 +139,80 @@ def determine_shortest(node: Node, distances: dict, not_visited: set, graph, inb
     return check_next, distances, not_visited
 
 
-cn, ds, nv = check_next, distances, not_visited
+# part 1
 
-while cn:
-    cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
-    print(cn)
-    # for k, v in ds.items():
-    #     if v != math.inf:
-    #         # print(k, v)
-    # print()
-    # input()
-for k, v in ds.items():
-    print(k, v)
+def part_one():
+    check_next, distances, not_visited, graph, inbounds = load_puzzle(filename)
+    cn, ds, nv = check_next, distances, not_visited
 
-# ntc, ds, nv = determine_shortest(ntc, ds, nv, graph, inbounds)
-# print(ntc)
-# for k, v in ds.items():
-#     if v != math.inf:
-#         print(k, v)
-# print()
-
-
-# Start at 0,0. Check all the nodes around.
-
-# For each point, check to the N, S, E, W
-# Be sure to check for out of bounds
-
-# r, c = 0, 0
-
-# # 0,1 -> Check to the E
-# new_distance = distances[r][c+1] + distances[r][c]
-
-# if new_distance < distances[r][c+i]:
-#     distances[r][c+i] = new_distance
-
-# # 1,0 -> Check S
-# new_distance = distances[r+1][c] + distances[r][c]
-
-# if new_distance < distances[r][c+1]:
-#     distances[r+1][c] = new_distance
-
-
-# def determine_shortest(node: Node, graph, distances, visited: set, inbounds):
-
-#     add_to_visited = set()
-
-#     for d in directions:
-
-#         new_distance = graph[next_node.r][next_node.c] + distances[node]
-#         if new_distance < distances[next_node]:
-#             distances[next_node] = new_distance
-
-#         if new_distance < shortest:
-#             shortest = new_distance
-#             add_to_visited.clear()
-#             add_to_visited.add(next_node)
-#         elif new_distance == shortest:
-#             add_to_visited.add(next_node)   
-
-#     visited.update(add_to_visited)
-
-#     return distances, visited
+    while cn:
+        cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
+        print(cn)
+        # for k, v in ds.items():
+        #     if v != math.inf:
+        #         # print(k, v)
+        # print()
+        # input()
+    for k, v in ds.items():
+        print(k, v)
 
 
 
+def load_puzzle_part2(filename):
+    ll = load_lines(filename)
+
+    graph = []
+    # increase = 0
+    for j in range(5):
+        for line in ll:
+            row = []
+            for i in range(5):
+                offset = j + i
+                for c in line:
+                    c = int(c) + offset
+                    if c > 9:
+                        c -= 9
+                    row.append(c)
+            graph.append(row)
+
+    max_r = len(graph)
+    max_c = len(graph[0])
+
+    distances = {}
+    for r in range(max_r):
+        for c in range(max_c):
+            distances[Node(r,c)] = math.inf
+
+    distances[Node(0,0)] = 0
+
+    not_visited = set(distances.keys())
+    # not_visited.remove(Node(0,0))
+
+    def inbounds(node: Node):
+        return 0 <= node.r < max_r and 0 <= node.c < max_c
+
+    check_next = Node(0,0)
+
+    return check_next, distances, not_visited, graph, inbounds
 
 
+def part_two():
+    check_next, distances, not_visited, graph, inbounds = load_puzzle_part2(filename)
+    cn, ds, nv = check_next, distances, not_visited
 
+    while cn:
+        cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
+        print(cn)
+        # for k, v in ds.items():
+        #     if v != math.inf:
+        #         # print(k, v)
+        # print()
+        # input()
+    for k, v in ds.items():
+        print(k, v)
+
+
+part_two()
 
 
 
