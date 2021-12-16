@@ -91,14 +91,14 @@ def load_puzzle(filename):
     def inbounds(node: Node):
         return 0 <= node.r < max_r and 0 <= node.c < max_c
 
-    check_next = Node(0,0)
+    check_next = {Node(0,0): 0}
 
     return check_next, distances, not_visited, graph, inbounds
 
 
 
 
-def determine_shortest(node: Node, distances: dict, not_visited: set, graph, inbounds):
+def determine_shortest(check_next: dict, distances: dict, not_visited: set, graph, inbounds):
 
     directions = [
         Node(-1, 0),    # N
@@ -107,7 +107,12 @@ def determine_shortest(node: Node, distances: dict, not_visited: set, graph, inb
         Node(0, -1),    # W
     ]
 
-    shortest = math.inf
+    shortest = min(check_next.values())
+    for node, distance in check_next.items():
+        if distances[node] == shortest:
+            break
+
+    check_next.pop(node)
 
     for d in directions:
         next_node = Node(node.r + d.r, node.c + d.c)
@@ -120,21 +125,9 @@ def determine_shortest(node: Node, distances: dict, not_visited: set, graph, inb
         distance = graph[next_node.r][next_node.c] + distances[node]
         if distance < distances[next_node]:
             distances[next_node] = distance
-
-        if distance < shortest:
-            shortest = distance
+            check_next[next_node] = distance
 
     not_visited.remove(node)
-
-    # print(shortest)
-
-    check_next = None
-    shortest = math.inf
-    for node, distance in distances.items():
-        # print(node, distance)
-        if distance < shortest and node in not_visited:
-            shortest = distance
-            check_next = node
 
     return check_next, distances, not_visited
 
@@ -147,7 +140,7 @@ def part_one():
 
     while cn:
         cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
-        print(cn)
+        # print(cn)
         # for k, v in ds.items():
         #     if v != math.inf:
         #         # print(k, v)
@@ -156,6 +149,8 @@ def part_one():
     for k, v in ds.items():
         print(k, v)
 
+# part_one()
+# import sys;sys.exit()
 
 
 def load_puzzle_part2(filename):
@@ -191,25 +186,24 @@ def load_puzzle_part2(filename):
     def inbounds(node: Node):
         return 0 <= node.r < max_r and 0 <= node.c < max_c
 
-    check_next = Node(0,0)
+    check_next = {Node(0,0): 0}
 
     return check_next, distances, not_visited, graph, inbounds
 
 
 def part_two():
+    import time
+    tic = time.perf_counter()
     check_next, distances, not_visited, graph, inbounds = load_puzzle_part2(filename)
     cn, ds, nv = check_next, distances, not_visited
 
     while cn:
         cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
-        print(cn)
-        # for k, v in ds.items():
-        #     if v != math.inf:
-        #         # print(k, v)
-        # print()
-        # input()
-    for k, v in ds.items():
-        print(k, v)
+
+    last_node = Node(len(graph) - 1, len(graph[0]) - 1)
+    print(last_node, ds[last_node])
+    toc = time.perf_counter()
+    print(f"Elapsed: {toc - tic:0.4f} seconds")
 
 
 part_two()
