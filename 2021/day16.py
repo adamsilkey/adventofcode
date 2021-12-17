@@ -49,9 +49,6 @@ def load_file(filename: str) -> str:
 
 
 Packet = namedtuple("Packet", ["version", "type_id", "otype", "value", "packet_length"])
-OPacket = namedtuple("OPacket", ["operator", "otype", "value", "packet_length"])
-LPacket = namedtuple("LPacket", ["value", "packet_length"])
-
 
 TOTAL_LENGTH = 0
 SUBPACKETS = 1
@@ -155,73 +152,6 @@ def sum_version(packets):
     return total
 
 
-def test_code():
-    test = decode('8A004A801A8002F478')
-    print_packets(test)
-    print(sum_version(test))
-    print()
-
-    test = decode('620080001611562C8802118E34')
-    print_packets(test)
-    print(sum_version(test))
-    print()
-
-    test = decode('C0015000016115A2E0802F182340')
-    print_packets(test)
-    print(sum_version(test))
-    print()
-
-    test = decode('A0016C880162017C3686B18A3D4780')
-    print_packets(test)
-    print(sum_version(test))
-    print()
-
-
-if not test:
-    ll = hex_to_bin(load_file(filename))
-
-    def part_one():
-        packets = decode(ll)
-
-        total = sum_version(packets)
-        print(len(packets))
-
-        print(f"p1: {total}")
-
-    part_one()
-
-
-def build_stack(packets: list[Packet]):
-
-    ptypes = {
-        0: '+',
-        1: '*',
-        2: 'min',
-        3: 'max',
-        5: '>',
-        6: '<',
-        7: '==',
-    }
-
-    packet_stack = []
-    for packet in packets:
-        if packet.type_id is None:
-            break
-        elif packet.type_id == 4:
-            packet_stack.append(LPacket(packet.value, packet.packet_length))
-        else:
-            if packet.otype == 0:
-                otype = 'length'
-            elif packet.otype == 1:
-                otype = 'num_subpackets'
-            else:
-                raise ValueError(f"unknown {packet.type_id=}")
-
-            packet_stack.append(OPacket(ptypes[packet.type_id], otype, packet.value, packet.packet_length))
-
-    return packet_stack
-
-
 def compute(opacket: Packet, packets: list[Packet]):
     otypes = {
         0: '+',
@@ -300,15 +230,53 @@ def run(packets: list[Packet]):
             new_packet = compute(last, substack)
             stack.append(new_packet)
 
-        print(stack)
-        # input()
+    print(stack)
             
 
 if test:
-    run(decode('C200B40A82'))
+    def test_code():
+        test = decode('8A004A801A8002F478')
+        print_packets(test)
+        print(sum_version(test))
+        print()
+
+        test = decode('620080001611562C8802118E34')
+        print_packets(test)
+        print(sum_version(test))
+        print()
+
+        test = decode('C0015000016115A2E0802F182340')
+        print_packets(test)
+        print(sum_version(test))
+        print()
+
+        test = decode('A0016C880162017C3686B18A3D4780')
+        print_packets(test)
+        print(sum_version(test))
+        print()
+
+
+        run(decode('C200B40A82'))
+
+    test_code()
 else:
-    packets = decode(ll)
-    run(packets)
+    ll = hex_to_bin(load_file(filename))
+
+    def part_one():
+        packets = decode(ll)
+
+        total = sum_version(packets)
+        print(len(packets))
+
+        print(f"p1: {total}")
+
+    def part_two():
+        ll = hex_to_bin(load_file(filename))
+        packets = decode(ll)
+        run(packets)
+
+    part_one()
+    part_two()
 
 if test:
     print()
