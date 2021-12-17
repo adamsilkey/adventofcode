@@ -163,11 +163,11 @@ def compute(opacket: Packet, packets: list[Packet]):
         7: '==',
     }
 
-    print(otypes[opacket.type_id])
-    print(opacket)
-    for p in packets:
-        print(p)
-    print()
+    # print(otypes[opacket.type_id])
+    # print(opacket)
+    # for p in packets:
+    #     print(p)
+    # print()
 
     match opacket.type_id:
         case 0: # sum
@@ -230,7 +230,7 @@ def run(packets: list[Packet]):
             new_packet = compute(last, substack)
             stack.append(new_packet)
 
-    print(stack)
+    return stack[0].value
             
 
 if test:
@@ -260,20 +260,25 @@ if test:
 
     test_code()
 else:
+    import time
     ll = hex_to_bin(load_file(filename))
 
     def part_one():
         packets = decode(ll)
 
         total = sum_version(packets)
-        print(len(packets))
 
         print(f"p1: {total}")
 
     def part_two():
+        tic = time.perf_counter()
+
         ll = hex_to_bin(load_file(filename))
         packets = decode(ll)
-        run(packets)
+        print(f"p2: {run(packets)}")
+
+        toc = time.perf_counter()
+        print(f"P2 time elapsed: {toc - tic:0.4f} seconds")
 
     part_one()
     part_two()
