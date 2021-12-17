@@ -55,7 +55,6 @@ LPacket = namedtuple("LPacket", ["value", "packet_length"])
 
 TOTAL_LENGTH = 0
 SUBPACKETS = 1
-
 PACKET_LITERAL = 4
 
 
@@ -103,7 +102,6 @@ def operator(s: str):
         raise ValueError("op_type was wrong?")
 
     return s, value, op_type, packet_length
-
 
 
 def decode_packet(s: str):
@@ -156,6 +154,7 @@ def sum_version(packets):
     
     return total
 
+
 def test_code():
     test = decode('8A004A801A8002F478')
     print_packets(test)
@@ -176,6 +175,7 @@ def test_code():
     print_packets(test)
     print(sum_version(test))
     print()
+
 
 if not test:
     ll = hex_to_bin(load_file(filename))
@@ -304,201 +304,11 @@ def run(packets: list[Packet]):
         # input()
             
 
-
-
 if test:
     run(decode('C200B40A82'))
 else:
     packets = decode(ll)
     run(packets)
-# packets.pop() # Pop the bad packet
-# print(packets[-3:])
-# print_packets(packets)
-
-# working = []
-# working.append(packets.pop())
-# working.append(packets.pop())
-# opacket = packets.pop()
-
-# result_packet = compute(opacket, working)
-# print(result_packet)
-
-# packets = build_stack(decode(ll))
-# print_packets(packets)
-import sys;sys.exit()
-
-
-
-
-
-
-
-# def get_version(s: str, processed):
-#     return processed + 3, s[3:], bint(s[0:3])
-
-
-# def get_type_id(s: str, processed):
-#     return processed + 3, s[3:], bint(s[0:3])
-
-
-
-
-# # def get_operator_type_id(s: str, processed):
-# #     print(s[0])
-# #     print(bint(s[0]))
-
-# #     # return processed + 1, s[1:], bint(s[0])
-# #     return processed + 1, s[1:], 'literal value'
-
-
-# def get_total_length_in_bits(s: str, processed):
-
-#     return processed + 15, s[15:], bint(s[:15])
-
-
-# def get_number_subpackets(s: str, processed):
-
-#     return processed + 11, s[11:], bint(s[:11])
-
-
-# def operator(s: str, processed, ptype):
-#     # value = 0
-#     if ptype == PTYPE.OPERATOR_TOTAL_LENGTH:
-#         processed, s, value == get_total_length_in_bits(s, processed)
-#     elif ptype == PTYPE.OPERATOR_SUBPACKETS:
-#         processed, s, value == get_number_subpackets(s, processed)
-
-#     return processed, s, value
-
-
-# def hack_off_zeroes(s: str, processed):
-#     padded_characters = 8 - (processed % BYTE_LENGTH)
-#     print(f"{processed=} {padded_characters=}")
-#     if padded_characters != 8:
-#         # hack off the padded zeroes
-#         s = s[padded_characters:]
-
-#     return processed + padded_characters, s, ''
-
-
-#     print(f"Decoding {s}")
-
-#     if processed is None:
-#         processed = 0
-
-#     if packets is None:
-#         packets = []
-
-#     # ptype = -1
-
-#     processed, s, version = get_version(s, processed)
-#     processed, s, type_id = get_type_id(s, processed)
-
-#     if type_id == PTYPE.LITERAL:
-#         processed, s, value = literal(s, processed)
-#         ptype = PTYPE.LITERAL
-#     else:
-#         ptype = bint(s[0])
-#         s = s[1:]
-#         processed += 1
-#         # processed, s, ptype == get_operator_type_id(s, processed)
-#         print(processed, s, ptype)
-#         processed, s, value = operator(s, processed, ptype)
-#         print(value)
-
-#     packet = Packet(version, type_id, ptype, value)
-#     packets.append(packet)
-
-#     if ptype == PTYPE.OPERATOR_SUBPACKETS:
-#         for i in range(value):
-#             processed, s, packets = decode_packet(s, processed=processed, packets=packets, subpacket=True)
-
-
-#     return processed, s, packets
-
-
-
-# print(decode_packet('EE00D40C823060'))
-
-
-
-
-
-
-# import sys;sys.exit()
-# print(decode_packet('110100101111111000101000'))
-
-# # def decode_packet(s: str):
-
-
-
-# #     if type_id == 4:
-# #         s, value = literal(s[HEADER_LENGTH:])
-# #     else:       ## Operator Packet
-# #         operator_type = bint[6]
-# #         if operator_type == '0':            # next 15 bits, total length
-# #             length = bint(s[7:7+15])
-# #         elif operator_type == '1':          # next 11 bits - number of subpackets
-# #             subpackets = bint(s[7:7+11])
-
-# #     return s, Packet(version, type_id, value)
-
-
-
-
-# def decode(s: str):
-#     packets = []
-#     while s:
-#         s, packet = decode_packet(s)
-#         packets.append(packet)
-    
-#     return packets
-
-
-# # print(sum_version(decode(hex_to_bin("620080001611562C8802118E34"))))   # --- this one is broken
-# s = hex_to_bin("620080001611562C8802118E34")   # --- this one is broken
-# print(s)
-# print(len(s))
-# # s, packet = decode_packet(s)
-# # s, packet = decode_packet(s)
-
-# import sys;sys.exit()
-# print(decode("110100101111111000101000"))
-# print(decode("11101110000000001101010000001100100000100011000001100000"))
-# print(sum_version(decode(hex_to_bin("8A004A801A8002F478"))))
-# print(sum_version(decode(hex_to_bin("C0015000016115A2E0802F182340"))))
-# print(sum_version(decode(hex_to_bin("A0016C880162017C3686B18A3D4780"))))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 if test:
     print()
