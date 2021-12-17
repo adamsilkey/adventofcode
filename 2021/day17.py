@@ -39,31 +39,6 @@ print(f"=" * len(title))
 print(title)
 print(f"=" * len(title))
 
-def load_file(filename: str) -> str:
-    """Loads an AOC file, returns a string"""
-
-    with open(filename) as f:
-        return f.read().rstrip("\n")
-
-
-def load_lines(filename: str) -> list[str]:
-    """Returns a list of lines"""
-
-    return load_file(filename).split("\n")
-
-
-def load_ints(filename: str) -> list[int]:
-    """Returns a list of ints"""
-
-    return [int(i) for i in load_lines(filename)]
-
-
-def load_comma_separated_ints(filename: str) -> list[int]:
-    """Returns a list of ints from a comma separated list of ints"""
-
-    return [int(i) for i in load_file(filename).strip().split(",")]
-
-
 Point = namedtuple("Point", ["x", "y"])
 
 if test:
@@ -81,7 +56,8 @@ def in_target_area(pt: Point, t1: Point, t2: Point):
 
 
 def beyond_target_area(pt: Point, t1: Point, t2: Point):
-    return pt.y < t2.y
+    # return pt.y < t2.y  WHOOPS
+    return pt.y < t1.y
 
 
 def before_target_area(pt: Point, t1: Point, t2: Point):
@@ -134,20 +110,24 @@ def find_highest(t1: Point, t2: Point):
             minimum_x_velocity = i
             break
 
-    minimum_y_velocity = t2.y
+    minimum_y_velocity = t1.y  # whoops. You had these backwards
+    # minimum_y_velocity = t2.y
     
     maximum_x_velocity = t2.x
     print(f"{minimum_x_velocity=} {maximum_x_velocity=}")
     # input()
 
+    velocities = []
+
     highest = -math.inf
     for x in range(minimum_x_velocity, maximum_x_velocity + 1):
+    # for x in range(-999, 999):
         print(f"Starting new {x=}")
-        hit = False
-        for y in range(minimum_y_velocity, maximum_x_velocity):
+        for y in range(minimum_y_velocity, abs(t1.y)):
+        # for y in range(-999, 999):
             height = shoot(Point(x,y), t1, t2)
-            if height != -math.inf and not hit:
-                hit = True
+            if height != -math.inf:
+                velocities.append(Point(x,y))
             
             if height > highest:
                 print(f"New Highest: {height=} old {highest=}")
@@ -159,6 +139,7 @@ def find_highest(t1: Point, t2: Point):
             # input()
 
     print(highest)
+    print(f"{len(velocities)=}")
 
 find_highest(_t1, _t2)
 
