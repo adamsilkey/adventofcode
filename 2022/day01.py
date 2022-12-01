@@ -92,7 +92,7 @@ print(lis)
 
 
 
-print(sum([69172, 71575, 73211]))
+print(sum(lis[-3:]))
 
 
 
