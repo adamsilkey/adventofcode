@@ -66,12 +66,10 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 
 p = load_lines()
 
-strategy = [()]
-
-# A rock x rock
-# b pap y pap
-# c sci z sci
-strategy = {
+# A rock x rock x loss
+# b pap y pap y draw
+# c sci z sci z win
+p2_strategy = {
     "A X": 3, # 
     "A Y": 4,
     "A Z": 8,
@@ -83,7 +81,7 @@ strategy = {
     "C Z": 7,
 }
 
-r1_strategy = {
+p1_strategy = {
     "A X": 4, # 
     "A Y": 8,
     "A Z": 3,
@@ -97,10 +95,15 @@ r1_strategy = {
 
 score = 0
 for line in p:
-    score += strategy[line]
+    score += p1_strategy[line]
 
-print(score)
+print(f"p1: {score}")
 
+score = 0
+for line in p:
+    score += p2_strategy[line]
+
+print(f"p2: {score}")
 
 
 
