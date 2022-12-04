@@ -66,19 +66,30 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 
 p = load_lines()
 
-count = 0
-sacks = []
 total = 0
+for line in p:
+    midway = len(line) // 2
+    sack1 = line[0:midway]
+    sack2 = line[midway:]
+    shared = set(sack1).intersection(set(sack2))
+
+    for toy in shared:
+        if toy.islower():
+            prio = (ord(toy) - ord('a') + 1)
+            total += prio
+        else:
+            prio = (ord(toy) - ord('A') + 27)
+            total += prio
+print(f"p1: {total}")
+
+sacks, count, total = [], 0, 0
 for line in p:
     sacks.append(line)
     count +=1 
 
     if count == 3:
-        print(sacks)
-
         # find badge
         badge = set(sacks[0]).intersection(set(sacks[1])).intersection(set(sacks[2])).pop()
-        print(badge)
 
         sacks = []
         count = 0
@@ -88,29 +99,8 @@ for line in p:
         else:
             prio = (ord(badge) - ord('A') + 27)
             total += prio
-print(total)
 
-def partone():
-    total = 0
-    for line in p:
-        print(line)
-        midway = len(line) // 2
-        sack1 = line[0:midway]
-        sack2 = line[midway:]
-
-        shared = set(sack1).intersection(set(sack2))
-        print(shared)
-
-        for toy in shared:
-            if toy.islower():
-                prio = (ord(toy) - ord('a') + 1)
-                total += prio
-            else:
-                prio = (ord(toy) - ord('A') + 27)
-                total += prio
-    print(total)
-
-
+print(f"p2: {total}")
 
 
 
