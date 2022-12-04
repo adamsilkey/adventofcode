@@ -4,6 +4,7 @@ YEAR = '2022'
 AOC_DAY = '04'
 
 import itertools as it
+import re
 import sys
 from collections import Counter, defaultdict, deque, namedtuple
 from dataclasses import dataclass
@@ -65,18 +66,11 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 
 
 p = load_lines()
+p1, p2 = 0, 0
 
-p1 = 0
-p2 = 0
 for line in p:
-
-    subs = []
-    for pair in line.split(','):
-        for num in pair.split('-'):
-            subs.append(int(num))
-
-    a = set(range(subs[0], subs[1]+1))
-    b = set(range(subs[2], subs[3]+1))
+    a, b, c, d = map(int, re.findall(r'\d+', line))
+    a, b = set(range(a, b+1)), set(range(c, d+1))
 
     if a.issubset(b) or b.issubset(a):
         p1 += 1
