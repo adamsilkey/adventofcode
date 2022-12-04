@@ -66,54 +66,26 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 
 p = load_lines()
 
-pairs = 0
+p1 = 0
+p2 = 0
 for line in p:
-    a,b = line.split(",")
-    a1, a2 = a.split('-')
-    b1, b2 = b.split('-')
 
-    a1 = int(a1)
-    a2 = int(a2)
-    b1 = int(b1)
-    b2 = int(b2)
+    subs = []
+    for pair in line.split(','):
+        for num in pair.split('-'):
+            subs.append(int(num))
 
-    a = set(range(a1, a2+1))
-    b = set(range(b1, b2+1))
+    a = set(range(subs[0], subs[1]+1))
+    b = set(range(subs[2], subs[3]+1))
+
+    if a.issubset(b) or b.issubset(a):
+        p1 += 1
 
     if (a & b):
-        pairs += 1
+        p2 += 1
     
-    print(a)
-    print(b)
-
-
-print(pairs)
-
-def partone():
-    pairs = 0
-    for line in p:
-        a,b = line.split(",")
-        a1, a2 = a.split('-')
-        b1, b2 = b.split('-')
-
-        a1 = int(a1)
-        a2 = int(a2)
-        b1 = int(b1)
-        b2 = int(b2)
-
-        if a1 >= b1 and a2 <= b2:
-            print("a in b")
-            print(a,b)
-            pairs += 1
-        elif b1 >= a1 and b2 <= a2:
-            print("b in a")
-            print(a,b)
-            pairs += 1
-
-    print(pairs)
-
-
-
+print(f"{p1=}")
+print(f"{p2=}")
 
 
 
