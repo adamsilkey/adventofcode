@@ -8,3 +8,6 @@ venv/
 
 # Junky mac files
 *.DS_STORE
+
+# AoC specific stuff
+input/
