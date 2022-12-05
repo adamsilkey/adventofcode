@@ -66,8 +66,29 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 
 
 
-p = load_lines()
-# print(p)
+p = load_file()
+stack_string, moves = p.split('\n\n')
+
+def parse_stacks(stack_string: str):
+    stacks = stack_string.split('\n')
+    number_of_stacks = max(map(int, stacks.pop().split()))
+    final_stacks = {i: [] for i in range(1, number_of_stacks + 1)}
+
+    while stacks:
+        line = stacks.pop()
+        # We start with -3, so we can just always add 4 and not
+        # worry about out of bounds errors
+        idx = -3
+        for i in range(1, number_of_stacks + 1):
+            idx += 4
+            if line[idx] != ' ':
+                final_stacks[i].append(line[idx])
+
+    return final_stacks
+
+print(parse_stacks(stack_string))
+
+sys.exit(0)
 
 stuff = {
     # Per the requests of advent of code, the actual puzzle input is considered
@@ -86,6 +107,9 @@ stuff = {
 
 
 
+
+
+
 # p2
 for line in p:
     qty,old,new = re.findall(r'\d+', line)
@@ -97,19 +121,19 @@ for line in p:
     for crate in new_stack:
         stuff[int(new)].append(crate)
         
+print(stuff)
+
+#p1
+for i in stuff:
+    print(stuff[i][-1], end='')
+for line in p:
+    qty,old,new = re.findall(r'\d+', line)
+    for i in range(int(qty)):
+        stuff[int(new)].append(stuff[int(old)].pop())
+        
 
 #p1
 print(stuff)
-for i in stuff:
-    print(stuff[i][-1], end='')
-# for line in p:
-#     qty,old,new = re.findall(r'\d+', line)
-#     for i in range(int(qty)):
-#         stuff[int(new)].append(stuff[int(old)].pop())
-        
-
-# #p1
-# print(stuff)
 
 
 
