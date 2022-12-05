@@ -86,54 +86,38 @@ def parse_stacks(stack_string: str):
 
     return final_stacks
 
-print(parse_stacks(stack_string))
 
-sys.exit(0)
+moves = moves.split('\n')
 
-stuff = {
-    # Per the requests of advent of code, the actual puzzle input is considered
-    # copyrighted, so I've removed the hardcoded values from here
-    1 : list(),
-    2 : list(),
-    3 : list(),
-    4 : list(),
-    5 : list(),
-    6 : list(),
-    7 : list(),
-    8 : list(),
-    9 : list(),
-}
+#p1
+stacks = parse_stacks(stack_string)
+for move in moves:
+    qty,old,new = re.findall(r'\d+', move)
+    for i in range(int(qty)):
+        stacks[int(new)].append(stacks[int(old)].pop())
 
-
-
-
-
-
+print("p1: ", end='')
+for stack in stacks:
+    print(stacks[stack][-1], end='')
+print()
 
 # p2
-for line in p:
-    qty,old,new = re.findall(r'\d+', line)
+stacks = parse_stacks(stack_string)
+for move in moves:
+    qty,old,new = re.findall(r'\d+', move)
     new_stack = []
     for i in range(int(qty)):
-        if stuff[int(old)]:
-            new_stack.append(stuff[int(old)].pop())
+        if stacks[int(old)]:
+            new_stack.append(stacks[int(old)].pop())
     new_stack.reverse()
     for crate in new_stack:
-        stuff[int(new)].append(crate)
+        stacks[int(new)].append(crate)
         
-print(stuff)
+print("p2: ", end='')
+for stack in stacks:
+    print(stacks[stack][-1], end='')
 
-#p1
-for i in stuff:
-    print(stuff[i][-1], end='')
-for line in p:
-    qty,old,new = re.findall(r'\d+', line)
-    for i in range(int(qty)):
-        stuff[int(new)].append(stuff[int(old)].pop())
-        
 
-#p1
-print(stuff)
 
 
 
