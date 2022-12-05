@@ -92,9 +92,9 @@ moves = moves.split('\n')
 #p1
 stacks = parse_stacks(stack_string)
 for move in moves:
-    qty,old,new = re.findall(r'\d+', move)
-    for i in range(int(qty)):
-        stacks[int(new)].append(stacks[int(old)].pop())
+    qty, old, new = list(map(int, re.findall(r'\d+', move)))
+    for i in range(qty):
+        stacks[new].append(stacks[old].pop())
 
 print("p1: ", end='')
 for stack in stacks:
@@ -104,14 +104,14 @@ print()
 # p2
 stacks = parse_stacks(stack_string)
 for move in moves:
-    qty,old,new = re.findall(r'\d+', move)
+    qty, old, new = list(map(int, re.findall(r'\d+', move)))
     new_stack = []
-    for i in range(int(qty)):
-        if stacks[int(old)]:
-            new_stack.append(stacks[int(old)].pop())
+    for i in range(qty):
+        if stacks[old]:
+            new_stack.append(stacks[old].pop())
     new_stack.reverse()
     for crate in new_stack:
-        stacks[int(new)].append(crate)
+        stacks[new].append(crate)
         
 print("p2: ", end='')
 for stack in stacks:
