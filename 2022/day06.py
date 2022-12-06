@@ -66,7 +66,6 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 
 
 
-p = list(load_file())
 ## Regex / list/map helpers
 # number_of_stacks = max(map(int, stacks.pop().split()))
 # qty, old, new = list(map(int, re.findall(r'\d+', move)))
@@ -74,27 +73,13 @@ p = list(load_file())
 #   - map needs to bec onverted to a list (or other object)
 
 
-## P1 - just did a range of 4 instead of a range of 14
+p = load_file()
+# n = 4
+n = 14
 
-for idx, char in enumerate(p):
-    if len(set( [
-        p[idx + 0], 
-        p[idx + 1], 
-        p[idx + 2], 
-        p[idx + 3], 
-        p[idx + 4], 
-        p[idx + 5], 
-        p[idx + 6], 
-        p[idx + 7], 
-        p[idx + 8], 
-        p[idx + 9], 
-        p[idx + 10], 
-        p[idx + 11], 
-        p[idx + 12], 
-        p[idx + 13], 
-    
-    ])) == 14:
-        print(idx+14)
+for idx, _ in enumerate(p):
+    if len(set(p[idx:idx+n])) == n:
+        print(idx+n)
         break
     
 
