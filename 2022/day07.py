@@ -245,13 +245,34 @@ filesystem = parse_filesystem(p)
 at_most = 100_000
 
 total = 0
+sizes = {}
 for d, v in filesystem.items():
     sz = v.get_size(filesystem)
-    print(f"{d}: {sz}")
+    sizes[d] = sz
+    # print(f"{d}: {sz}")
     if sz <= at_most:
         total += sz
 
 print(f"p1: {total}")
+print(sizes)
+
+candidates = []
+total_disk_space = 70_000_000
+unused_needed = 30_000_000
+current_disk_space = total_disk_space - filesystem['/'].get_size(filesystem)
+needed = unused_needed - current_disk_space
+
+print(current_disk_space)
+print(needed)
+
+for k, v in filesystem.items():
+    sz = v.get_size(filesystem)
+    if sz >= needed:
+        candidates.append(sz)
+
+print(candidates)
+print(min(candidates))
+#     if total_disk_space 
 
 # class Filesystem:
 #     def __init__(self):
