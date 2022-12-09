@@ -78,14 +78,14 @@ p = load_lines(FILENAME)
 Point = namedtuple("Point", ["x", "y"])
 
 directions = dict(
-    # NL = Point(-1, -1),
+    UL = Point(-1, 1),
     U = Point(0, 1),
-    # NR = Point(1, -1),
+    UR = Point(1, 1),
     L = Point(-1, 0),
     R = Point(1, 0),
-    # DL = Point(-1, 1),
+    DL = Point(-1, -1),
     D = Point(0, -1),
-    # UR = Point(1, 1),
+    DR = Point(1, -1),
 )
 
 class Rope:
@@ -100,20 +100,50 @@ class Rope:
         self.x += directions[direction].x
         self.y += directions[direction].y
 
-    def tail_move(self, direction, head):
-        dx = directions[direction].x
-        dy = directions[direction].y
-        if direction in ['U', 'D']:
-            self.x = head.x
+        return self
+
+    def tail_move(self, head):
+
+        dx = (head.x - self.x) // 2
+        dy = (head.y - self.y) // 2
+
+        if head.x == self.x:
             self.y = head.y - dy
-        elif direction in ['L', 'R']:
+        elif head.y == self.y:
             self.x = head.x - dx
-            self.y = head.y
+        else:
+            # move diagonal
+            if head.x > self.x:
+                dx = 1
+            elif head.x < self.x:
+                dx = -1
+            if head.y > self.y:
+                dy = 1
+            elif head.y < self.y:
+                dy = -1
+            self.x += dx
+            self.y += dy
+
+        # if dx and dy:
+        #     self.x = head.x - dx
+        #     self.y = head.y - dy
+        # elif dx:
+        #     self.x = head.x - dx
+        #     self.y = head.y
+        # elif dy:
+        #     self.x = head.x
+        #     self.y = head.y - dy
+        return self
+    
+    def rope_move(self, dx, dy):
+        self.x += dx
+        self.y += dy
+        pass
 
 
-head = Rope(0,0)
-tail = Rope(0,0)
-seen = set(Point(0,0))
+# head = Rope(0,0)
+# tail = Rope(0,0)
+# seen = set(Point(0,0))
 
 def need_move(head, tail):
     # print(head)
@@ -126,19 +156,33 @@ def need_move(head, tail):
 
 # print(need_move(head, tail))
 
+# p = load_lines(r"input/09a.test")
 
+knotrope = [Rope(0,0) for _ in range(10)]
+print(knotrope)
+seen = set()
 for line in p:
+    # print("====================")
+    # print(f"New move instruction {line}")
     direction, distance = line.split()
-    print(direction, distance)
     for _ in range(int(distance)):
-        head.move(direction)
-        print(f"{head=}")
-        if need_move(head, tail):
-            print("Need move!")
-            tail.tail_move(direction, head)
-            seen.add(Point(tail.x, tail.y))
-        print(f"{tail=}")
-        print()
+
+        # first, move the head
+        # print(f'----- Head moving {direction} {_ + 1}------')
+        knotrope[0].move(direction)
+
+        # check each knot in turn
+        for idx, _ in enumerate(knotrope[1:], 1):
+            # check if the next knot needs to move
+            if need_move(knotrope[idx - 1], knotrope[idx]):
+                knotrope[idx].tail_move(knotrope[idx - 1])
+            
+                seen.add((knotrope[9].x, knotrope[9].y))
+    #         print(idx, knotrope[9])
+    # print("----- Final positionn ---------")
+    # print(knotrope)
+    # print(len(seen))
+    # input()
 
 print(len(seen))
 
