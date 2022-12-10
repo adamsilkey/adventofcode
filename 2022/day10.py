@@ -77,110 +77,79 @@ p = deque(load_lines(FILENAME))
 
 Point = namedtuple("Point", ["x", "y"])
 
-
-
-def addx(v):
-    return v
-
-# register_x = 1
-# cycles = 1
-# stack = {}
-# active = 0
-# total = 0
-
-# while True:
-#     # start of cycle
-#     cycles += 1
-#     if not p:
-#         break
-#     if not active:
-#         ins = p.popleft()
-#         if ins != 'noop':
-#             ins, value = ins.split()
-#             active = 1
-#     elif active:
-#         active -= 1
-#         if active == 0:
-#             register_x += int(value)
+class CRT:
+    def __init__(self, height: int, length: int) -> None:
+        self.height = height
+        self.length = length
+        self.display = ['.' for _ in range(self.height * self.length)]
+        self.x = 1
+        self.cycles = 0
+        self.signal_strength = 0
     
-#     if cycles in [20, 60, 100, 140, 180, 220]:
-#         total += (register_x * cycles)
+    def __repr__(self):
+        return f"CRT(height={self.height}, length={self.length})"
 
-#     # end of cycle
-
-# print(total)
-
-
-## p2
-
-
-def checkpixel(cycles, register_x):
-    pixel = register_x
-    pos = cycles - 1
-
-    # if I'm at 41 cycles, my pos needs to be 1
-    pos = pos % 40
-
-    # if pos in [pixel - 1, pixel, pixel + 1]:
-    if pos in range(pixel-1, pixel+2):
-        return True
-    else:
-        return False
-
-# print(checkpixel(41, 1))
-# sys.exit()
-
-def print_crt(crt):
-    for idx, c in enumerate(crt):
-        if idx % 40 == 0:
-            print("")
-        print(c, end='')
+    def __str__(self):
+        final = ''
+        # Set start/end so that we end up with [0:self.length]
+        start = -(self.length)
+        end = 0
+        for row in range(self.height):
+            start += self.length
+            end += self.length
+            final += ''.join(self.display[start:end])
+            final += '\n'
+        return final
+    
+    def draw_pixel(self) -> None:
+        pos = (self.cycles - 1) % self.length
+        if self.x - 1 <= pos <= self.x + 1:
+            self.display[self.cycles - 1] = '#'
         
-crt = ['.' for _ in range(40*6)]
-
-register_x = 1
-active = 0
-cycles = 0
-
-while True:
-    # start of cycle
-    cycles += 1
-    if not p:
-        break
-    if not active:
-        ins = p.popleft()
-        if ins != 'noop':
-            ins, value = ins.split()
-            active = 1
-        if checkpixel(cycles, register_x):
-            crt[cycles - 1] = '#'
-    elif active:
-        if checkpixel(cycles, register_x):
-            crt[cycles - 1] = '#'
-        active -= 1
-        if active == 0:
-            register_x += int(value)
+        if (self.cycles - 20) % self.length == 0:
+            self.signal_strength += self.x * self.cycles
     
+    def execute(self, instruction: str) -> None:
+        match instruction.split():
+            case ['addx', x]:
+                self.addx(x)
+            case ['noop']:
+                self.noop()
 
-    DEBUG = False
-    if DEBUG:
-        print_crt(crt)
+    def addx(self, x: int) -> None:
+        for _ in range(2):
+            self.cycles += 1
+            self.draw_pixel()
+        self.x += int(x)
+    
+    def noop(self) -> None:
+        self.cycles += 1
+        self.draw_pixel()
+
+
+class Program:
+    def __init__(self, height: int, length: int, filename: str):
+        self.height = height
+        self.length = length
+        self.filename = filename
+        self.crt = CRT(self.height, self.length)
+    
+    def __repr__(self):
+        return f"Program(height={self.height}, length={self.length}, filename={self.filename}"
+    
+    def run(self):
+        with open(self.filename) as f:
+            for instruction in f:
+                self.crt.execute(instruction)
+        
+        print(f"p1: {self.crt.signal_strength}")
+        print("p2:")
         print()
-        print(f"{register_x=}")
-        print(f"{cycles=}")
-        input()
-    # else:
-    #     print_crt(crt)
-    
-print_crt(crt)
-    # if cycles in [20, 60, 100, 140, 180, 220]:
-    #     total += (register_x * cycles)
+        print(self.crt)
+        
 
-    # end of cycle
-    # print_crt(crt)
-    # input()
-
-
+program = Program(6, 40, FILENAME)
+program.run()
 
 
 
