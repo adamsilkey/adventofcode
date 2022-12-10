@@ -106,7 +106,7 @@ class CRT:
         if self.x - 1 <= pos <= self.x + 1:
             self.display[self.cycles - 1] = '#'
         
-        if (self.cycles - 20) % self.length == 0:
+        if self.cycles % self.length == 20:
             self.signal_strength += self.x * self.cycles
     
     def execute(self, instruction: str) -> None:
