@@ -82,11 +82,65 @@ Point = namedtuple("Point", ["x", "y"])
 def addx(v):
     return v
 
+# register_x = 1
+# cycles = 1
+# stack = {}
+# active = 0
+# total = 0
+
+# while True:
+#     # start of cycle
+#     cycles += 1
+#     if not p:
+#         break
+#     if not active:
+#         ins = p.popleft()
+#         if ins != 'noop':
+#             ins, value = ins.split()
+#             active = 1
+#     elif active:
+#         active -= 1
+#         if active == 0:
+#             register_x += int(value)
+    
+#     if cycles in [20, 60, 100, 140, 180, 220]:
+#         total += (register_x * cycles)
+
+#     # end of cycle
+
+# print(total)
+
+
+## p2
+
+
+def checkpixel(cycles, register_x):
+    pixel = register_x
+    pos = cycles - 1
+
+    # if I'm at 41 cycles, my pos needs to be 1
+    pos = pos % 40
+
+    # if pos in [pixel - 1, pixel, pixel + 1]:
+    if pos in range(pixel-1, pixel+2):
+        return True
+    else:
+        return False
+
+# print(checkpixel(41, 1))
+# sys.exit()
+
+def print_crt(crt):
+    for idx, c in enumerate(crt):
+        if idx % 40 == 0:
+            print("")
+        print(c, end='')
+        
+crt = ['.' for _ in range(40*6)]
+
 register_x = 1
-cycles = 1
-stack = {}
 active = 0
-total = 0
+cycles = 0
 
 while True:
     # start of cycle
@@ -98,19 +152,33 @@ while True:
         if ins != 'noop':
             ins, value = ins.split()
             active = 1
+        if checkpixel(cycles, register_x):
+            crt[cycles - 1] = '#'
     elif active:
+        if checkpixel(cycles, register_x):
+            crt[cycles - 1] = '#'
         active -= 1
         if active == 0:
             register_x += int(value)
     
-    if cycles in [20, 60, 100, 140, 180, 220]:
-        total += (register_x * cycles)
+
+    DEBUG = False
+    if DEBUG:
+        print_crt(crt)
+        print()
+        print(f"{register_x=}")
+        print(f"{cycles=}")
+        input()
+    # else:
+    #     print_crt(crt)
+    
+print_crt(crt)
+    # if cycles in [20, 60, 100, 140, 180, 220]:
+    #     total += (register_x * cycles)
 
     # end of cycle
-
-print(total)
-
-    
+    # print_crt(crt)
+    # input()
 
 
 
