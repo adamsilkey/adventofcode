@@ -7,6 +7,7 @@ import itertools as it
 import re
 import sys
 from collections import Counter, defaultdict, deque, namedtuple
+from contextlib import suppress
 from dataclasses import dataclass
 from string import ascii_letters, ascii_lowercase, ascii_uppercase
 
@@ -81,6 +82,8 @@ class Monkey:
         self.items: deque = items
         self.operation = operation
         self.value = value
+        with suppress(ValueError):
+            self.value = int(self.value)
         self.divisor = int(divisor)
         self.truemonkey = int(truemonkey)
         self.falsemonkey = int(falsemonkey)
@@ -152,28 +155,87 @@ for monkey in monkeystrings:
     #print(monkey)
     monkeys.append(monkey)
 
+all_divisors = 1
+for monkey in monkeys:
+    all_divisors *= monkey.divisor
+    
 
 def go(monkeys: list[Monkey]):
-    for i in range(20):
+    for i in range(10000):
         monkeys_not_done = [False for _ in monkeys]
         while not any(monkeys_not_done):
             for idx,monkey in enumerate(monkeys):
                 while monkey.items:
-                    item = int(monkey.items.popleft())
+                    original_value = item = int(monkey.items.popleft())
                     item = monkey.increase_worry(item)
-                    item //= 3
-                    next_monkey = monkey.test(item)
-                    monkeys[next_monkey].items.append(item)
+
+                    # p1 worry
+                    # item //= 3
+                    # p2 managing worry
+                    throw_to = monkey.test(item)
+                    next_monkey = monkeys[throw_to]
+
+                    item = item % all_divisors
+
+                    # if monkey.operation == '*' and next_monkey.operation == '+':
+                    #     item = (item // monkey.value) - (item % monkey.divisor)
+                    # if monkey.operation == '*' and next_monkey.operation == '**':
+
+
+
+                    # if next_monkey.value == 'old':
+                    #     item = item % next_monkey.divisor
+                    #     pass
+                    # elif next_monkey.operation == '*':
+                    #     # item = item % next_monkey.divisor
+                    #     pass
+                    # elif next_monkey.operation == '+' and monkey.operation != '+':
+                    #     item = item % next_monkey.divisor
+                    #     pass
+
+                    # if next_monkey.value == 'old':
+                    #     item //= item
+                    # elif next_monkey.operation == '*':
+                    #     item //= int(monkey.value)
+                    # elif next_monkey.operation == '+':
+                    #     if monkey.value == 'old':
+                    #         item //= item
+                    #     elif monkey.operation == '*':
+                    #         item //= int(monkey.value)
+
+                    # if next_monkey.value == 'old':
+                    #     if monkey.value == 'old':
+                    #         item //= item
+                    #     elif monkey.operation == '*':
+                    #         item //= int(monkey.value)
+                    #     # item = original_value
+                    #     # item //= worry_manager
+                    # elif next_monkey.operation == '+':
+                    #     if monkey.value == 'old':
+                    #         item //= item
+                    #     elif monkey.operation == '*':
+                    #         item //= int(monkey.value)
+                    #     # worry_manager = int(original_value)
+                    #     # item //= worry_manager
+                    #     pass
+                    # elif next_monkey.operation == '*':
+                    #     if monkey.operation == '*':
+                    #         item //= int(monkey.value)
+                    #     elif monkey.operation == 'old':
+                    #         item //= item
+                    #     # item //= worry_manager
+
+                    monkeys[throw_to].items.append(item)
                 monkeys_not_done[idx] = True
-        print(f"round {i}")
-        for monkey in monkeys:
-            print(monkey.id, ': ', monkey.inspections)
+        # print(f"round {i}")
             # print(monkey.items)
         # input()
                 
 
 go(monkeys)
 
+for monkey in monkeys:
+    print(monkey.id, ': ', monkey.inspections)
 
 
 
