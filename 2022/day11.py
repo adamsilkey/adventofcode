@@ -126,8 +126,8 @@ class Monkey:
                 case 'Starting', 'items:', *items:
                     items = deque([int(item.rstrip(',')) for item in items])
                 case 'Operation:', *rest, operation, value:
-                    # print(operation, value)
-                    value = value
+                    if value.isdigit():
+                        value = int(value)
                 case 'Test:', *rest, divisor:
                     divisor = divisor
                 case 'If', 'true:', *rest, truemonkey:
