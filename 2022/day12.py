@@ -183,10 +183,6 @@ def load_puzzle_p2(filename):
         
         graph.append(graph_row)
 
-
-    return graph, end_node, starting_nodes
-
-def check_p2(graph, end_node, start_node):
     max_r = len(graph)
     max_c = len(graph[0])
     distances = {}
@@ -194,7 +190,7 @@ def check_p2(graph, end_node, start_node):
         for c in range(max_c):
             distances[Node(r,c)] = math.inf
 
-    distances[start_node] = 0
+    # distances[start_node] = 0
     # print(f"{distances[start_node]=}")
 
     not_visited = set(distances.keys())
@@ -206,9 +202,11 @@ def check_p2(graph, end_node, start_node):
     # check_next = {Node(0,0): 0}
     check_next = []
     # heapq.heappush(check_next, (0, start_node))
-    heapq.heappush(check_next, (0, start_node))
+    for node in starting_nodes:
+        distances[node] = 0
+        heapq.heappush(check_next, (0, node))
 
-    return check_next, distances, not_visited, start_node, end_node, graph, inbounds
+    return check_next, distances, not_visited, end_node, graph, inbounds
 
 # print(graph)
 
@@ -264,26 +262,19 @@ def determine_shortest(check_next, distances: dict, not_visited: set, graph, inb
 
 # print(f"Part 1: {end_node} {distances[end_node]}")
 
-graph, end_node, starting_nodes = load_puzzle_p2(FILENAME)
+# graph, end_node, starting_nodes = load_puzzle_p2(FILENAME)
 
-shortest = math.inf
-
-for node in starting_nodes:
-    check_next, distances, not_visited, start_node, end_node, graph, inbounds = check_p2(graph, end_node, node)
+check_next, distances, not_visited, end_node, graph, inbounds = load_puzzle_p2(FILENAME)
 
 # print(graph)
 # input()
-    while check_next:
-        check_next, distances, not_visited = determine_shortest(check_next, distances, not_visited, graph, inbounds)
+while check_next:
+    check_next, distances, not_visited = determine_shortest(check_next, distances, not_visited, graph, inbounds)
 
-    # for node, distance in distances.items():
-    #     print(node, distance)
+# for node, distance in distances.items():
+#     print(node, distance)
 
-    # print(f"Part 1: {end_node} {distances[end_node]}")
-    if distances[end_node] < shortest:
-        shortest = distances[end_node]
-
-print(shortest)
+print(f"Part 2: {end_node} {distances[end_node]}")
 
 
 
