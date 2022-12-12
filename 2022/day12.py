@@ -286,39 +286,6 @@ for node in starting_nodes:
 print(shortest)
 
 
-sys.exit()
-
-def run():
-    import time
-
-    # Part 1
-    tic = time.perf_counter()
-    check_next, distances, not_visited, graph, inbounds = load_puzzle(filename, 1)
-    cn, ds, nv = check_next, distances, not_visited
-
-    while cn:
-        cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
-
-    last_node = Node(len(graph) - 1, len(graph[0]) - 1)
-    print(f"Part 1: {last_node} {ds[last_node]}")
-    toc = time.perf_counter()
-    print(f"Elapsed: {toc - tic:0.4f} seconds")
-
-
-    # Part 2
-    tic = time.perf_counter()
-    check_next, distances, not_visited, graph, inbounds = load_puzzle(filename, 2)
-    cn, ds, nv = check_next, distances, not_visited
-
-    while cn:
-        cn, ds, nv = determine_shortest(cn, ds, nv, graph, inbounds)
-
-    last_node = Node(len(graph) - 1, len(graph[0]) - 1)
-    print(f"Part 2: {last_node} {ds[last_node]}")
-    toc = time.perf_counter()
-    print(f"Elapsed: {toc - tic:0.4f} seconds")
-
-# run()
 
 
 
@@ -362,31 +329,3 @@ if test:
 else:
     print()
     print("You just ran that production data. Nice work!")
-
-
-'''
-    elif part == 2:
-        # graph = []
-        # # increase = 0
-        # for j in range(5):
-        #     for line in ll:
-        #         row = []
-        #         for i in range(5):
-        #             offset = j + i
-        #             for c in line:
-        #                 c = int(c) + offset
-        #                 if c > 9:
-        #                     c -= 9
-        #                 row.append(c)
-        #         graph.append(row)
-
-        # max_r = len(graph)
-        # max_c = len(graph[0])
-
-        # distances = {}
-        # for r in range(max_r):
-        #     for c in range(max_c):
-        #         distances[Node(r,c)] = math.inf
-        pass
-
-'''
