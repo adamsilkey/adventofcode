@@ -162,6 +162,53 @@ def load_puzzle(filename):
     return check_next, distances, not_visited, start_node, end_node, graph, inbounds
 
 
+def load_puzzle_p2(filename):
+    p = load_lines(filename)
+
+    # Set elevation
+    elevation = {'S': 0, 'E': 25}
+    for idx,c in enumerate(ascii_lowercase):
+        elevation[c] = idx
+
+    starting_nodes = []
+    graph = []
+    for irow, row in enumerate(p):
+        graph_row = []
+        for icol, col in enumerate(row):
+            graph_row.append(elevation[col])
+            if col in ['S', 'a']:
+                starting_nodes.append(Node(irow, icol))
+            if col == 'E':
+                end_node = Node(irow, icol)
+        
+        graph.append(graph_row)
+
+
+    return graph, end_node, starting_nodes
+
+def check_p2(graph, end_node, start_node):
+    max_r = len(graph)
+    max_c = len(graph[0])
+    distances = {}
+    for r in range(max_r):
+        for c in range(max_c):
+            distances[Node(r,c)] = math.inf
+
+    distances[start_node] = 0
+    # print(f"{distances[start_node]=}")
+
+    not_visited = set(distances.keys())
+    # not_visited.remove(Node(0,0))
+
+    def inbounds(node: Node):
+        return 0 <= node.r < max_r and 0 <= node.c < max_c
+
+    # check_next = {Node(0,0): 0}
+    check_next = []
+    # heapq.heappush(check_next, (0, start_node))
+    heapq.heappush(check_next, (0, start_node))
+
+    return check_next, distances, not_visited, start_node, end_node, graph, inbounds
 
 # print(graph)
 
@@ -176,9 +223,9 @@ def determine_shortest(check_next, distances: dict, not_visited: set, graph, inb
 
     node = heapq.heappop(check_next)[1]
     node_height = graph[node.r][node.c]
-    print()
-    print(f"Checking {node=}")
-    print(f"{node_height=}")
+    # print()
+    # print(f"Checking {node=}")
+    # print(f"{node_height=}")
 
     for d in directions:
         next_node = Node(node.r + d.r, node.c + d.c)
@@ -188,7 +235,7 @@ def determine_shortest(check_next, distances: dict, not_visited: set, graph, inb
         # only check for the next nodes
         next_height = graph[next_node.r][next_node.c]
         if next_height - node_height > 1:
-            print(f"This next node is too big for me: {next_node=}")
+            # print(f"This next node is too big for me: {next_node=}")
             continue
         if next_node not in not_visited:
             continue
@@ -205,18 +252,38 @@ def determine_shortest(check_next, distances: dict, not_visited: set, graph, inb
 
     return check_next, distances, not_visited
 
-check_next, distances, not_visited, start_node, end_node, graph, inbounds = load_puzzle(FILENAME)
+# check_next, distances, not_visited, start_node, end_node, graph, inbounds = load_puzzle(FILENAME)
+
+# # print(graph)
+# # input()
+# while check_next:
+#     check_next, distances, not_visited = determine_shortest(check_next, distances, not_visited, graph, inbounds)
+
+# for node, distance in distances.items():
+#     print(node, distance)
+
+# print(f"Part 1: {end_node} {distances[end_node]}")
+
+graph, end_node, starting_nodes = load_puzzle_p2(FILENAME)
+
+shortest = math.inf
+
+for node in starting_nodes:
+    check_next, distances, not_visited, start_node, end_node, graph, inbounds = check_p2(graph, end_node, node)
 
 # print(graph)
 # input()
-while check_next:
-    check_next, distances, not_visited = determine_shortest(check_next, distances, not_visited, graph, inbounds)
+    while check_next:
+        check_next, distances, not_visited = determine_shortest(check_next, distances, not_visited, graph, inbounds)
 
-for node, distance in distances.items():
-    print(node, distance)
+    # for node, distance in distances.items():
+    #     print(node, distance)
 
-print(f"Part 1: {end_node} {distances[end_node]}")
+    # print(f"Part 1: {end_node} {distances[end_node]}")
+    if distances[end_node] < shortest:
+        shortest = distances[end_node]
 
+print(shortest)
 
 
 sys.exit()
