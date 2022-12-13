@@ -118,29 +118,23 @@ Node = namedtuple("Node", ["r", "c"])
 p = load_file(FILENAME)
 
 
-def checkpairs(packet_a, packet_b):
-    
-    for left, right in zip_longest(packet_a, packet_b):
-        if left is None:
-            return 1
-        elif right is None:
-            return -1
+def checkpairs(left, right):
 
-        if isinstance(left, int) and isinstance(right, int):
-            # print(left, right)
-            if left > right:
-                return -1
-            elif left < right:
-                return 1
-        
-        else:
-            if isinstance(left, int):
-                left = [left]
-            elif isinstance(right, int):
-                right = [right]
-            res = checkpairs(left, right)
-            if res is not None:
-                return res
+    match left, right:
+        case None, _:
+            return 1
+        case _, None:
+            return -1
+        case int(), int():
+            return 1 if left < right else -1
+        case int(), list():
+            return checkpairs([left], right)
+        case list(), int():
+            return checkpairs(left, [right])
+        case list(), list():
+            for l, r in zip_longest(left, right):
+                if res := checkpairs(l, r):
+                    return res
 
 
 def build_packets_p2(p):
@@ -162,6 +156,8 @@ def part2(puzzlestring):
             decoder *= idx
 
     print(f"p2: {decoder}")
+
+part2(p)
 sys.exit()
 
 # Part 1
