@@ -11,6 +11,7 @@ import sys
 from collections import Counter, defaultdict, deque, namedtuple
 from contextlib import suppress
 from dataclasses import dataclass
+from functools import cmp_to_key
 from itertools import zip_longest
 from string import ascii_letters, ascii_lowercase, ascii_uppercase
 
@@ -116,115 +117,88 @@ Node = namedtuple("Node", ["r", "c"])
 
 p = load_file(FILENAME)
 
-global level 
-level = 0
 
 def checkpairs(packet_a, packet_b):
-    global level
-    print(f"{level=}")
     
     for left, right in zip_longest(packet_a, packet_b):
         if left is None:
-            return True
+            return 1
         elif right is None:
-            return False
+            return -1
 
         if isinstance(left, int) and isinstance(right, int):
-            print(left, right)
+            # print(left, right)
             if left > right:
-                return False
+                return -1
             elif left < right:
-                return True
+                return 1
         
-        elif isinstance(left, list) and isinstance(right, list):
-            level += 1
-            res = checkpairs(left, right)
-            level -= 1
-            print(level)
-            if res is not None:
-                return res
+        # elif isinstance(left, list) and isinstance(right, list):
+        #     res = checkpairs(left, right)
+        #     if res is not None:
+        #         return res
         
         else:
             if isinstance(left, int):
                 left = [left]
             elif isinstance(right, int):
                 right = [right]
-            level += 1
             res = checkpairs(left, right)
-            level -= 1
-            print(level)
             if res is not None:
                 return res
-        
 
-
-
-    # for a, b in zip_longest(packet_a, packet_b):
-    #     if isinstance(a, int) and isinstance(b, int):
-    #         print(a,b)
-    #         if a > b:
-    #             return False, level
-    #         elif a < b:
-    #             return True, level
-    #         # elif a == b:
-    #         #     return None
-    #             # return None
-    #         # check for None
-        
-    #     #check for mismatches
-    #     if isinstance(a, int):
-    #         a = [a]
-    #     elif isinstance(b, int):
-    #         b = [b]
-
-    #     if isinstance(a, list) and isinstance(b, list):
-    #         level += 1
-    #         print(level)
-    #         res = checkpairs(a, b, level)
-    #         if res is None:
-    #             continue
-    #         result = res[0]
-    #         level = res[1]
-    #         level = level - 1
-    #         if result is True:
-    #             return True, level
-    #         elif result is False:
-    #             return False, level
-        
-    #     if level == 0:
-    #         if a is None:
-    #             return True, level
-    #         if b is None:
-    #             return False, level
+def build_packets_p2(p):
+    packets = p.split('\n')
+    final_packets = []
+    for p in packets:
+        if not p:
+            continue
+        else:
+            final_packets.append(eval(p))
     
-    # if not packet_a:
-    #     return True, level
-    # elif not packet_b:
-    #     return False, level
+    packets = final_packets
+    packets.append([[2]])
+    packets.append([[6]])
+
+    return packets
+
+
     
-    # # return None, level
+
+packets = build_packets_p2(p)
+packets = sorted(packets, key=cmp_to_key(checkpairs), reverse=True)
+# bubble_sort(packets)
+decoder = 1
+for idx,p in enumerate(packets, 1):
+    if p == [[2]] or p == [[6]]:
+        print(idx)
+        decoder *= idx
+    print(p)
+
+print(decoder)
+sys.exit()
+
+# Part 1
+
+def part1():
+    packetpairs = p.split('\n\n')
+    total = 0
+    for idx, packetpair in enumerate(packetpairs,1):
+        a, b = packetpair.split('\n')
+        packet_a = eval(a)
+        packet_b = eval(b)
+        print(f"Round {idx}",a, b)
+        res = checkpairs(packet_a, packet_b)
+        print(res)
+        if res is None: raise
+        if res is True:
+            total += idx
+        print()
 
 
+    print(total)
 
-
-packetpairs = p.split('\n\n')
-total = 0
-for idx, packetpair in enumerate(packetpairs,1):
-    a, b = packetpair.split('\n')
-    packet_a = eval(a)
-    packet_b = eval(b)
-    print(f"Round {idx}",a, b)
-    res = checkpairs(packet_a, packet_b)
-    print(res)
-    if res is None: raise
-    if res is True:
-        total += idx
-    print()
-
-
-print(total)
-
-
+part1()
 
 
 
