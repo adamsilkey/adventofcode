@@ -133,11 +133,6 @@ def checkpairs(packet_a, packet_b):
             elif left < right:
                 return 1
         
-        # elif isinstance(left, list) and isinstance(right, list):
-        #     res = checkpairs(left, right)
-        #     if res is not None:
-        #         return res
-        
         else:
             if isinstance(left, int):
                 left = [left]
@@ -147,35 +142,26 @@ def checkpairs(packet_a, packet_b):
             if res is not None:
                 return res
 
+
 def build_packets_p2(p):
     packets = p.split('\n')
-    final_packets = []
-    for p in packets:
-        if not p:
-            continue
-        else:
-            final_packets.append(eval(p))
-    
-    packets = final_packets
+    packets = [eval(p) for p in packets if p]
     packets.append([[2]])
     packets.append([[6]])
 
     return packets
 
 
-    
+def part2(puzzlestring):   
+    packets = build_packets_p2(puzzlestring)
+    packets = sorted(packets, key=cmp_to_key(checkpairs), reverse=True)
+    decoder = 1
+    for idx,p in enumerate(packets, 1):
+        if p == [[2]] or p == [[6]]:
+            print(idx)
+            decoder *= idx
 
-packets = build_packets_p2(p)
-packets = sorted(packets, key=cmp_to_key(checkpairs), reverse=True)
-# bubble_sort(packets)
-decoder = 1
-for idx,p in enumerate(packets, 1):
-    if p == [[2]] or p == [[6]]:
-        print(idx)
-        decoder *= idx
-    print(p)
-
-print(decoder)
+    print(f"p2: {decoder}")
 sys.exit()
 
 # Part 1
