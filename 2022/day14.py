@@ -79,6 +79,7 @@ Node = namedtuple("Node", ["r", "c"])
 p = load_file(FILENAME)
 
 
+
 # 4     5  5
 # 9     0  0
 # 4     0  3
@@ -95,31 +96,131 @@ cavestring = '''
 9 #########.
 '''.strip()
 
-class Cave:
+DIRS = dict(
+    D = Node(1, 0),
+    DL = Node(1, -1),
+    DR = Node(1, 1),
+)
 
-    def __init__(self, cavestring, corner_r, corner_c):
-        self.cave = []
-        for line in cavestring.splitlines():
-            # print(line)
-            num, caveicons = line.split()
-            self.cave.append([icon for icon in caveicons])
+class Cave:
+    SAND_ORIGIN = Node(0, 500)
+
+    def __init__(self, layout, left_col, right_col, lower_row):
+        self.layout = layout
+        self.left_col = left_col
+        self.right_col = right_col
+        self.lower_row = lower_row
+        self.p1 = 0
+
+        self.grid = []
+        for r in range(0, lower_row + 1):
+            row = ['.' for c in range(self.left_col, self.right_col + 1)]
+            self.grid.append(row)
+
+        for rockform in layout:
+            self.add_rock_formation(rockform)
     
-    def __repr__(self):
-        return f"Cave(cavestring={self.cavestring})"
+    @classmethod
+    def fromfile(cls, filename):
+        layout = []
+        left_col = math.inf
+        right_col = -math.inf
+        lower_row = 0
+        with open(filename) as f:
+            for line in f:
+                rockstructure = []
+                coords = line.split(' -> ')
+                # print(coords)
+                for coord in coords:
+                    c, r = coord.split(',')
+                    c = int(c)
+                    r = int(r)
+                    rockstructure.append(Node(r, c))
+
+                    # find the left/right bounds
+                    if c < left_col:
+                        left_col = c
+                    if c > right_col:
+                        right_col = c
+                    if r > lower_row:
+                        lower_row = r
+
+
+                layout.append(rockstructure)
+        
+        return cls(layout, left_col, right_col, lower_row)
+
+    def add_rock_formation(self, rockformation):
+        for start, end in zip(rockformation[0:-1], rockformation[1:]):
+
+            start = Node(start.r, start.c - self.left_col)
+            end = Node(end.r, end.c - self.left_col)
+
+            if start > end:
+                end, start = start, end
+            
+            if start.c - end.c == 0:
+                for r in range(start.r, end.r+1):
+                    self.grid[r][start.c] = '#'
+            else: # column
+                for c in range(start.c, end.c+1):
+                    self.grid[start.r][c] = '#'
+
+    # def __repr__(self):
+    #     return f"Cave(cavestring={self.cavestring})"
 
     def __str__(self):
         final_string = ''
-        for row in self.cave:
+        for row in self.grid:
             final_string += ''.join(row)
             final_string += '\n'
         
         return final_string
+    
+    def drop_sand(self):
+        sand = Node(self.SAND_ORIGIN.r, self.SAND_ORIGIN.c - self.left_col)
+
+        # check next
+        while True:
+            blocks = ['#', 'o']
+            d = DIRS["D"]
+            dr = DIRS["DR"]
+            dl = DIRS["DL"]
+
+            next = Node(sand.r + d.r, sand.c + d.c)
+            if not self.grid[next.r][next.c] in blocks:
+                sand = Node(next.r, next.c)
+                continue
+            next = Node(sand.r + dl.r, sand.c + dl.c)
+            if not self.grid[next.r][next.c] in blocks:
+                sand = Node(next.r, next.c)
+                continue
+            next = Node(sand.r + dr.r, sand.c + dr.c)
+            if not self.grid[next.r][next.c] in blocks:
+                sand = Node(next.r, next.c)
+                continue
+
+            self.grid[sand.r][sand.c] = 'o'
+            self.p1 += 1
+            break
+
+    def run(self):
+        try:
+            while True:
+                self.drop_sand()
+                # print(self)
+                # input()
+        except IndexError:
+            print(self.p1)
+
+
 
 
     # def build_cave(self, cavestring, corner_r, corner_c):
 
-cave = Cave(cavestring, 0, 494)
+cave = Cave.fromfile(FILENAME)
 print(cave)
+cave.run()
 
 
 
