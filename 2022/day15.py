@@ -74,6 +74,7 @@ def load_comma_separated_ints(filename: str = FILENAME) -> list[int]:
 # monkeystrings = p.split('\n\n')
 Node = namedtuple("Node", ["r", "c"])
 Point = namedtuple("Point", ["x", "y"])
+Range = namedtuple("Range", ["start", "end"])
 # from string import ascii_lowercase
 
 
@@ -92,11 +93,108 @@ for line in p:
 manhattans = {}
 
 for sensor, beacon in points.items():
-    print(sensor, beacon)
-    print(manhattan(sensor, beacon))
+    # print(sensor, beacon)
+    # print(manhattan(sensor, beacon))
     manhattans[sensor] = manhattan(sensor, beacon)
 
-# exit()
+
+
+
+# for each sensor and manhattan
+    # for each line
+        # get the range of possible values for 
+
+def p2(sensor, dist, row):
+
+    # The distance between sensor y and the row 
+    if abs(sensor.y - row) > dist:
+        # print(sensor)
+        # sys.exit()
+        # print('not here boss')
+        return None
+    else:
+        pass
+        # print()
+        # print("THIS ONE")
+        # print(sensor, dist)
+
+    # get how much y has possibly moved
+    y_travel = abs(row - sensor.y)
+    # print(f"{y_travel=}")
+
+    # get the total x value
+    remainder = abs(dist - y_travel)
+    # print(f"{remainder=}")
+    x_travel = sensor.x + remainder
+    x2_travel = sensor.x - remainder
+
+    return Point(x_travel, row), Point(x2_travel, row)
+
+
+if test:
+    MAX = 20
+else:
+    MAX = 4_000_000
+
+def solvepart2():
+    for i in range(MAX + 1):
+        if i % 10_000 == 0:
+            print(i)
+        ranges = []
+        for sensor, dist in manhattans.items():
+            res = p2(sensor, dist, i)
+            if res is not None:
+                end, start = res[0], res[1]
+                # print(start, end)
+                start = start.x
+                end = end.x
+                if start < 0:
+                    start = 0
+                if end > MAX:
+                    end = MAX
+                ranges.append(Range(start, end + 1))
+
+        ranges.sort()
+        # if i == 11:
+        #     # print()
+        #     # print()
+        #     # print()
+        #     # print()
+        #     # print(ranges)
+        #     # return
+        # if False:
+        # if i == 14:
+            # print(f"row = {i}")
+            # print(ranges)
+        
+        ending = 1
+        consecutive = range(ending)
+        for r1, r2 in zip(ranges[:-1], ranges[1:]):
+            if r1.end > ending:
+                ending = r1.end
+                consecutive = range(ending)
+            # if r2.end < ending:
+            #     continue
+            # if r2.start - r1.end > 1:
+            if r2.start not in consecutive:
+                print("I found it!")
+                print(f"row = {i}")
+                print(ranges)
+                print(r1.end, r2.start)
+                return
+        
+        if test and i == 11:
+            print(ranges)
+            print(":(")
+            return
+        
+        # exit()
+
+solvepart2()    
+
+
+
+exit()
 def p1(sensor, manhattan):
     if test:
         ROW = 10
