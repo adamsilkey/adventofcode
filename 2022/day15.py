@@ -138,7 +138,7 @@ else:
 
 def solvepart2():
     for i in range(MAX + 1):
-        if i % 10_000 == 0:
+        if i % 100_000 == 0:
             print(i)
         ranges = []
         for sensor, dist in manhattans.items():
@@ -181,7 +181,10 @@ def solvepart2():
                 print(f"row = {i}")
                 print(ranges)
                 print(r1.end, r2.start)
-                return
+                print()
+                freq = r1.end * 4000000 + i
+                print(f"Tuning frequency is {freq}")
+                return freq
         
         if test and i == 11:
             print(ranges)
