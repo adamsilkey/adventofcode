@@ -90,31 +90,31 @@ from itertools import cycle
 
 
 hline = set([
-        Node(3,2), Node(3,3), Node(3,4), Node(3,5),
+        Node(4,2), Node(4,3), Node(4,4), Node(4,5),
         ])
 
 cross = set([
-                   Node(5,3),
-        Node(3,2), Node(4,3), Node(4,4),
-                   Node(3,3),
+                   Node(6,3),
+        Node(5,2), Node(5,3), Node(5,4),
+                   Node(4,3),
                    ])
 
 lshape = set([
+                              Node(6,4),
                               Node(5,4),
-                              Node(4,4),
-        Node(3,2), Node(3,3), Node(3,4),
+        Node(4,2), Node(4,3), Node(4,4),
         ])
 
 vline = set([
+        Node(7,2),
         Node(6,2),
         Node(5,2),
         Node(4,2),
-        Node(3,2),
         ])
 
 box = set([
+        Node(5,2), Node(5,3),
         Node(4,2), Node(4,3),
-        Node(3,2), Node(3,3),
         ])
 
 
@@ -135,10 +135,9 @@ class Cave:
         self.cycle = cycle
 
     def spawn(self):
-        return self.move(next(self.shapes), 0, self.highest)
+        return self.move(next(self.shapes), self.highest, 0)
     
-    @staticmethod
-    def move(shape, dr, dc):
+    def move(self, shape, dr, dc):
         xshape = set()
         for node in shape:
             r = node.r + dr
@@ -146,26 +145,48 @@ class Cave:
 
             # If we are going to move out of bounds, just return the shape
             if c < 0 or c > 6:
+                # print('moving out of bounds, returning shape')
+                # print(c)
                 return shape
             xshape.add(Node(r, c))
 
+            # Check if we are going to hit an existing shape when moving
+            # horizontally
+            if dc and self.blocks.intersection(xshape):
+                return shape
+
         return xshape
 
-    def simulate(self, shape, dc):
+    def show(self):
+        blocks = sorted(list(self.blocks))[::-1]
+        current_row = blocks[0].r
+        row = ['.' for _ in range(7)]
+        for node in blocks:
+            if node.r < current_row:
+                current_row = node.r
+                print(''.join(row))
+                row = ['.' for _ in range(7)]
 
-        if dc == '<': dc = -1
-        if dc == '>': dc = 1
+            row[node.c] = '#'
+
+
+    def simulate(self, shape):
 
         while True:
+            dc = next(self.cycle)
+            # print(dc)
+            if dc == '<': dc = -1
+            if dc == '>': dc = 1
             # adjust all rocks in the direction
             shape = self.move(shape, 0, dc)
-            print(f"horizontal move {dc}")
-            print(shape)
+            # print(f"horizontal move {dc}")
+            # print(shape)
 
             # move all rocks down, store in a potential move
             xshape = self.move(shape, -1, 0)
-            print(f"vertical move -1")
-            print(xshape)
+            # print(f"vertical move -1")
+            # print(xshape)
+            # print()
             # input()
 
             # check to see if these any of these new poitns overlap with
@@ -186,21 +207,26 @@ class Cave:
     
     def run(self, rounds):
         # spawn shape
-        for i in range(rounds):
-            print(i)
+        for i in range(1, rounds + 1):
+            if i % 100000 == 0:
+                print(i)
             shape = self.spawn()
-            self.simulate(shape, next(self.cycle))
-            print(sorted(list(self.blocks)))
-            print(self.highest)
-            print()
-            input()
+            self.simulate(shape)
+            # print(sorted(list(self.blocks))[::-1])
+            # self.show()
+            # input()
 
 
+        print(f"{self.highest=}")
         return self.highest
 
 
 cave = Cave.fromstring(p)
 cave.run(2022)
+
+p2 = 1_000_000_000_000
+
+cave.run(p2)
 
 
 
