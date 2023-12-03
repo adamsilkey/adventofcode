@@ -3,7 +3,9 @@
 YEAR = '2023'
 AOC_DAY = '02'
 
+import functools
 import itertools as it
+import re
 import sys
 from collections import Counter, defaultdict, deque, namedtuple
 from dataclasses import dataclass
@@ -64,71 +66,39 @@ def load_comma_separated_ints(filename: str) -> list[int]:
 
 
 
-print(filename)
-
 inp = load_lines(filename)
 
-RED = 12
-GREEN = 13
-BLUE = 14
+p1_max = {
+    "red": 12,
+    "green": 13,
+    "blue": 14,
+}
 
-sum = 0
+p1 = 0
+p2 = 0
 
 for line in inp:
-    bad = False
-    _, n, *colors = line.split()
-    n = int(n[:-1])
-    colors = ' '.join(colors)
-    colors = colors.split(';')
-    red = []
-    green = []
-    blue = []
-    for colorset in colors:
-        colors = colorset.strip().split()
-        colors = list(zip(colors, colors[1:]))[::2]
-        for color in colors:
-            if color[1].startswith('red'):
-                red.append(int(color[0]))
-            if color[1].startswith('green'):
-                green.append(int(color[0]))
-            if color[1].startswith('blue'):
-                blue.append(int(color[0]))
-    print(max(red), max(green), max(blue))
-    sum += max(red) * max(green) * max(blue)
-        
-print(sum)
+    game_id, _, cubes = line.partition(':')
+    game_id = re.search('\d+', game_id)[0]
 
-# for line in inp:
-#     bad = False
-#     _, n, *colors = line.split()
-#     n = int(n[:-1])
-#     colors = ' '.join(colors)
-#     colors = colors.split(';')
-#     for colorset in colors:
-#         red, green, blue = 0, 0, 0
-#         colors = colorset.strip().split()
-#         colors = list(zip(colors, colors[1:]))[::2]
-#         for color in colors:
-#             if color[1].startswith('red'):
-#                 red += int(color[0])
-#             if color[1].startswith('green'):
-#                 green += int(color[0])
-#             if color[1].startswith('blue'):
-#                 blue += int(color[0])
-#         print(red, green, blue)
-#         if red > RED or green > GREEN or blue > BLUE:
-#             bad = True
-#     if not bad:
-#         sum += n
-        
-#     #     if color[1].endswith(';'):
-#     #         red, green, blue = 0, 0, 0
-#     # else:
-#     #     sum += n
+    max_colors = {
+        "red": 0,
+        "green": 0,
+        "blue": 0,
+    }
+
+    for subset in cubes.split(";"):
+        for color in subset.split(","):
+            n, color = color.strip().split()
+            max_colors[color] = max(int(n), max_colors[color])
     
+    if Counter(max_colors) <= Counter(p1_max):
+        p1 += int(game_id)
+    p2 += functools.reduce(lambda x, y: x*y, max_colors.values())
 
-#     # print(colors)
-# print(sum)
+print(f"{p1=}")
+print(f"{p2=}")
+
 
 
 
