@@ -83,110 +83,66 @@ directions = dict(
     SE = Point(1, 1),
 )
 
-
-MIN = 0
-MAX_Y = len(schematic)
-MAX_X = len(schematic[0])
-
+# Create Grid. Pad '.'s all around to avoid having to deal with bounds issues
 grid = []
-grid.append(['.' for _ in range(MAX_X + 2)])
+grid.append(['.' for _ in range(len(schematic[0]) + 2)])
 for line in schematic:
     grid.append(['.'] + [c for c in line] + ['.'])
 
 
-
-def find_number(grid, r, c):
-    left = c
-    right = c
+def find_number_bounds(grid, r, c):
+    """Returns the slice of a number based on our grid"""
+    start = c
+    stop = c
     
-    # print(grid[r][left])
-    # input()
+    while grid[r][start].isdigit():
+        start -= 1
+    start += 1  # add back the extra digit cause we have no do/while
 
-    while grid[r][left].isdigit():
-        left -= 1
-    left += 1  # add back the extra digit cause we have no do/while
-
-    while grid[r][right].isdigit():
-        right += 1
-    right -= 1 # see above
-
-    return left, right
-
+    while grid[r][stop].isdigit():
+        stop += 1
+    
+    return slice(start, stop)
 
 seen = set()
-
 part_numbers = []
-
 gear_ratio = 0
 
 for r, row in enumerate(grid):
     for c, symbol in enumerate(row):
         if symbol not in "0123456789.":
-            # look in all directions
-            gear_score = 0
-            gears = []
+            parts = []
+
+            # Look in all directions
             for d in directions.values():
-                new_point = Point(r + d.r, c + d.c)
-                if grid[new_point.r][new_point.c].isdigit() and new_point not in seen: 
-                    print("we found a number")
-                    # find the adjacent numbers, add it to seen
-                    left, right = find_number(grid, new_point.r, new_point.c)
-                    # print(left, right)
-                    for i in range(left, right + 1):
-                        seen.add(Point(new_point.r, i))
-                    part_number = int(''.join(grid[new_point.r][left:right+1]))
-                    part_numbers.append(part_number)
-                    # part_numbers.append(int(''.join(grid[new.r][left:right+1])))
-                    gear_score += 1
-                    gears.append(part_number)
-            if gear_score == 2:
-                gear_ratio += gears[0] * gears[1]
+                dr = r + d.r
+                dc = c + d.c
 
+                # Did we find a part we haven't seen yet?
+                if grid[dr][dc].isdigit() and Point(dr, dc) not in seen: 
 
-print(part_numbers)
-print(gear_ratio)
+                    # Find the slice bounds
+                    bounds = find_number_bounds(grid, dr, dc)
 
-print(sum(part_numbers))
+                    # Add those points to seen, so we don't look at parts we've already seen
+                    for i in range(bounds.start, bounds.stop):
+                        seen.add(Point(dr, i))
+                    
+                    # Generate the part number based on the range
+                    part_number = int(''.join(grid[dr][bounds]))
 
+                    # Add part to parts
+                    parts.append(part_number)
+            
+            # Handle Part 2 and Gearing
+            if symbol == '*' and len(parts) == 2:
+                gear_ratio += functools.reduce(lambda x, y: x * y, parts)
+            
+            # Extend our overal part numbers
+            part_numbers.extend(parts)
 
-
-
-
-# for y, line in enumerate(schematic):
-#     for x, c in enumerate(line):
-#         if c not in "0132456789.":
-#             print(f"found special character: {c}")
-#             # look in all directions
-#             for dir_ in directions:
-#                 pass
-
-
-
-
-
-
-
-
-
-
-p1 = 0
-p2 = 0
-
-print(f"{p1=}")
-print(f"{p2=}")
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(f"Part 1: {sum(part_numbers)}")
+print(f"Part 2: {gear_ratio}")
 
 
 
