@@ -117,10 +117,14 @@ seen = set()
 
 part_numbers = []
 
+gear_ratio = 0
+
 for r, row in enumerate(grid):
     for c, symbol in enumerate(row):
         if symbol not in "0123456789.":
             # look in all directions
+            gear_score = 0
+            gears = []
             for d in directions.values():
                 new_point = Point(r + d.r, c + d.c)
                 if grid[new_point.r][new_point.c].isdigit() and new_point not in seen: 
@@ -133,8 +137,14 @@ for r, row in enumerate(grid):
                     part_number = int(''.join(grid[new_point.r][left:right+1]))
                     part_numbers.append(part_number)
                     # part_numbers.append(int(''.join(grid[new.r][left:right+1])))
+                    gear_score += 1
+                    gears.append(part_number)
+            if gear_score == 2:
+                gear_ratio += gears[0] * gears[1]
+
 
 print(part_numbers)
+print(gear_ratio)
 
 print(sum(part_numbers))
 
