@@ -70,75 +70,28 @@ from dataclasses import dataclass
 
 inp = load_lines(filename)
 
-
-sum = 0
-
 games = {}
 for line in inp:
     card, _, values = line.partition(":")
     card = int(card.split()[-1])
 
     part_a, _, part_b = values.partition("|")
-    winners = [int(a) for a in part_a.split()]
-    numbers = [int(b) for b in part_b.split()]
+    winners = set(int(a) for a in part_a.split())
+    numbers = set(int(b) for b in part_b.split())
 
-    score = 0
-    for winner in winners:
-        if winner in numbers:
-            score += 1
-    
-    games[card] = score
+    games[card] = len(winners.intersection(numbers))
 
+total_cards = Counter({card: 1 for card in games})
 
-total_cards = Counter()
-for key in games:
-    total_cards[key] = 1
+p1 = 0
+for card_id, score in games.items():
+    p1 += pow(2, score - 1) if score > 1 else score
+    for i in range(card_id+1, card_id+score+1):
+        total_cards[i] += total_cards[card_id]
 
-for k, v in games.items():
-    print(f"processing card {k}, values {v}")
-    for n in range(total_cards[k]):
-        for i in range(k+1, k+v+1):
-            total_cards[i] += 1
-
-print(sorted(total_cards.items()))
-
-sum = 0
-for v in total_cards.values():
-    sum += v
-print(sum)
-
-
-
-
-
-def p1():
-    for line in inp:
-        card, _, values = line.partition(":")
-        card = int(card.split()[-1])
-
-        part_a, _, part_b = values.partition("|")
-        winners = [int(a) for a in part_a.split()]
-        numbers = [int(b) for b in part_b.split()]
-
-        score = 0
-        for winner in winners:
-            if winner in numbers:
-                score += 1
-        
-        if score == 0:
-            continue
-        elif score == 1:
-            score = 1
-        else:
-            score = pow(2, score - 1)
-        
-        sum += score
-
-
-    print(sum)
-
-
-
+print(f"{p1=}")
+p2 = sum(v for v in total_cards.values())
+print(f"{p2=}")
 
 
 
