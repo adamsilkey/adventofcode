@@ -68,7 +68,7 @@ from collections import Counter, defaultdict, deque, namedtuple
 from dataclasses import dataclass
 
 
-Range = namedtuple("Range", "destination source length")
+Range = namedtuple("Range", "dest source length")
 
 a = Range(1,2,3)
 print(a)
@@ -80,11 +80,10 @@ print(seeds)
 
 
 def map_instructions(s: str):
-    final_map = {}
+    final_map = []
     for line in s.splitlines()[1:]:
         dest, source, length = [int(n) for n in line.split()]
-        for i in range(length):
-            final_map[source + i] = dest + i
+        final_map.append(Range(dest, source, length))
     
     return final_map
 
@@ -96,11 +95,13 @@ light_to_temperature = map_instructions(inp[5])
 temperature_to_humidity = map_instructions(inp[6])
 humidity_to_location = map_instructions(inp[7])
 
-def follow_map(n, map_):
-    if n in map_:
-        return map_[n]
-    else:
-        return n
+def follow_map(n, map_: Range):
+    for range_ in map_:
+        if range_.source <= n < range_.source + range_.length:
+            return range_.dest + n - range_.source
+    
+    return n
+
 
 
 def find_location(seed):
