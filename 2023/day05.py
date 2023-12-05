@@ -70,70 +70,13 @@ from dataclasses import dataclass
 
 Range = namedtuple("Range", "dest source length")
 
+a = Range(1,2,3)
+print(a)
+
 inp = load_file(filename).split("\n\n")
 
 seeds = [int(a) for a in inp[0].split(":")[1].split()]
-
-p2_seeds = inp[0].split(":")[1].split()
-
-def pairwise(iterable):
-    a = iter(iterable)
-    return zip(a, a)
-
-p2_seed_range = {}
-for start, stop in pairwise(p2_seeds):
-    start = int(start)
-    stop = start + int(stop)
-    p2_seed_range[range(start, stop)] = range(start, stop)
-
-print(p2_seed_range)
-
-def map_instructions(s: str):
-    final_map = {}
-    for line in s.splitlines()[1:]:
-        dest, source, length = [int(n) for n in line.split()]
-        final_map[range(source, source+length)] = range(dest, dest+length)
-    
-    return final_map
-
-
-def overlaps(x: range, y: range):
-    return max(x.start, y.start) < min(x.stop, y.stop)
-
-
-def split_overlapping_ranges(x: range, y: range):
-    # If there's no overlap, just return the original range
-    if not overlaps(x, y):
-        return x
-
-
-
-print(overlaps(range(55,68), range(50, 69)))
-
-sys.exit()
-
-
-def generate_new_map(seeds_map, next_map):
-    final_map = {}
-    for seed_source, seed_dest in seeds_map.items():
-        for next_source, next_dest in next_map.items():
-            pass
-
-
-
-
-
-seeds_to_soil = map_instructions(inp[1])
-print(seeds_to_soil)
-sys.exit()
-soil_to_fertilizer = map_instructions(inp[2])
-fertilizer_to_water =map_instructions(inp[3])
-water_to_light = map_instructions(inp[4])
-light_to_temperature = map_instructions(inp[5])
-temperature_to_humidity = map_instructions(inp[6])
-humidity_to_location = map_instructions(inp[7])
-
-sys.exit()
+print(seeds)
 
 
 def map_instructions(s: str):
@@ -162,7 +105,7 @@ def follow_map(n, map_: Range):
 
 
 def find_location(seed):
-    # print(seed)
+    print(seed)
     soil = follow_map(seed, seeds_to_soil)
     fertilizer = follow_map(soil, soil_to_fertilizer)
     water = follow_map(fertilizer, fertilizer_to_water)
@@ -175,18 +118,10 @@ def find_location(seed):
 
 locs = [find_location(seed) for seed in seeds]
 
-print(f"p1: {min(locs)}")
-
-
-
-### P2
-
-locs = []
-for pair in p2_seed_range:
-    locs2 = [find_location(n) for n in range(pair.start, pair.stop)]
-    locs.extend(locs2)
-
+print(locs)
 print(min(locs))
+
+# print(inp)
 
 
 
