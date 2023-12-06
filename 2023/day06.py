@@ -100,7 +100,27 @@ for speed in range(time+1):
     else:
         break
 
-print(f"Part 2: {time - losers - losers + 1}")
+p2 = time - losers - losers + 1
+
+"""
+There are three general approaches to Day 06 - Part 2:
+    
+- O(n) Brute force (find all winners)
+- O(n) Brute force (find the losers)
+- O(1) Quadratic formula
+
+In practice, finding all the losers is significantly faster than
+finding all the winners, as you have to check for far fewer items.
+
+Below, you can see benchmark difference in pure cycles between
+brute force (winners) and brute force (losers).
+"""
+
+print(f"Part 2 time: {time:,}")
+print(f"Part 2 - cycles to find 1/2 of losers: {losers:,}")
+print(f"Part 2 - cycles to find all the winners: {losers + p2:,}")
+print()
+print(f"Part 2 Puzzle Solution: {p2}")
 
 
 
