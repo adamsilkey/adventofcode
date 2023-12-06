@@ -66,40 +66,30 @@ import re
 import sys
 from collections import Counter, defaultdict, deque, namedtuple
 from dataclasses import dataclass
+from math import prod
 
 
 inp = load_lines(filename)
+times = [int(time) for time in inp[0].split(":")[1].split()]
+distances = [int(distance) for distance in inp[1].split(":")[1].split()]
 
-# Race = namedtuple("Race", "time distance")
+Race = namedtuple("Race", "time distance")
 
-# test = [
-    # "imagine the test inputs"
-# ]
+races = [Race(*race) for race in zip(times, distances)]
 
-# prod = [
-    # "imagine the prod inputs"
-# ]
-
-# def calc_winners(race: Race):
-#     winners = []
-#     for speed in range(race.time+1):
-#         time = race.time - speed
-#         if time * speed > race.distance:
-#             winners.append(speed)
+def calc_winners(race: Race):
+    winners = []
+    for speed in range(race.time+1):
+        time = race.time - speed
+        if time * speed > race.distance:
+            winners.append(speed)
     
-#     return len(winners)
+    return len(winners)
 
-# for race in prod:
-#     print(calc_winners(race))
+print(f"Part 1: {prod(calc_winners(race) for race in races)}")
 
-
-time = "your input time here"
-distance = "your distance time here"
-
-# test = time // 2
-
-# print(test * test) 
-# print(test * test > distance)
+time = int("".join(str(time) for time in times))
+distance = int("".join(str(dist) for dist in distances))
 
 losers = 0
 for speed in range(time+1):
@@ -110,7 +100,7 @@ for speed in range(time+1):
     else:
         break
 
-print(time - losers - losers + 1)
+print(f"Part 2: {time - losers - losers + 1}")
 
 
 
