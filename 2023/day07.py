@@ -166,23 +166,132 @@ class Hand:
             case 5:
                 return 1
 
-    # @staticmethod
-    # def convert_hand(hand: str):
-    #     hand = list(hand)
-    #     hand = ",".join(hand)+","
-    #     hand = list(int(card) for card in hand.split(",")[:-1])
-    #     hand.sort(reverse=True)
 
-    #     return hand
+class Hand2:
+    
+    def __init__(self, hand: str, bid: int):
+        self.hand = hand
+        self.bid = bid
+    
+    def __repr__(self):
+        return self.hand
+    
+    def __str__(self):
+        return self.hand
+    
+    def __eq__(self, other):
+        if not self.rank == other.rank:
+            return False
+        else:
+            for left, right in zip(self.hand, other.hand):
+                left = self.convert_card(left)
+                right = self.convert_card(right)
+
+                if left != right:
+                    return False
+            else: # no break
+                return True
+
+    def __gt__(self, other):
+        if self.rank == other.rank:
+            for left, right in zip(self.hand, other.hand):
+                left = self.convert_card(left)
+                right = self.convert_card(right)
+
+                if left != right:
+                    return left > right
+            else: # equal hands
+                return left > right
+        else:
+            return self.rank > other.rank
+
+    def __lt__(self, other):
+        if self.rank == other.rank:
+            for left, right in zip(self.hand, other.hand):
+                left = self.convert_card(left)
+                right = self.convert_card(right)
+
+                if left != right:
+                    return left < right
+            else: # equal hands
+                return left < right
+        else:
+            return self.rank < other.rank
+
+    def __ge__(self, other):
+        return self.__gt__(other) or self.__eq__(other)
+
+    def __le__(self, other):
+        return self.__lt__(other) or self.__eq__(other)
+
+    @staticmethod
+    def convert_card(s: str) -> int:
+        s = s.replace("A", "14").replace("T", "10").replace("J", "1").replace("Q", "12").replace("K", "13")
+
+        return int(s)
+
+
+    @staticmethod
+    def compare_hand(left: list[int], right: list[int]):
+        lc = Counter(left)
+        rc = Counter(right)
+        pass
+
+    @property
+    def rank(self):
+        hc = Counter(self.hand)
+
+        if 'J' in hc:
+            if len(hc) == 1:
+                return 7 # five of a kind
+            # print(hand, 'found J')
+            joker_hc = Counter(self.hand)
+            num_js = joker_hc['J']
+            # print(num_js)
+            del joker_hc['J']
+            # print(joker_hc)
+            try:
+                key = joker_hc.most_common(1)[0][0]
+            except IndexError:
+                print(self.hand)
+                sys.exit()
+            joker_hc[key] += num_js
+
+        
+            hc = joker_hc
+            # print('joker', hc)
+
+        match len(hc):
+            case 1: # five of a kind
+                return 7
+            case 2: # four of a kind or full house
+                if 4 in hc.values():
+                    return 6
+                else:
+                    return 5
+            case 3: # three of a kind or two pair
+                if 3 in hc.values():
+                    return 4
+                else:
+                    return 3
+            case 4: # one pair
+                return 2
+            case 5:
+                return 1
+
+
+
+
+
 
 hands = []
 for line in inp:
     a, b = line.split()
     
-    hands.append(Hand(a, int(b)))
+    hands.append(Hand2(a, int(b)))
 
-# for hand in hands:
-#     print(hand.hand, hand.rank)
+for hand in hands:
+    print(hand.hand, hand.rank)
 
 hands.sort()
 
