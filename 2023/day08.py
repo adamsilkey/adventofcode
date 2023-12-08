@@ -76,49 +76,37 @@ inp = load_file(filename)
 instructions, raw_nodes = inp.split("\n\n")
 
 nodes = {}
-
 for node in raw_nodes.splitlines():
     node, lr = node.split(' = ')
-
     left, right = lr.strip()[1:-1].split(", ")
-
     nodes[node] = LR(left, right)
 
 
-# for node, lr in nodes.items():
-#     print(node, lr)
-
-
 # part 1
-# node = 'AAA'
+node = 'AAA'
 
-# steps = 0
-# for direction_ in it.cycle(instructions.strip()):
-#     # print(direction_)
-#     steps += 1
-#     if direction_ == 'L':
-#         next_node = nodes[node].L
-#     else:
-#         next_node = nodes[node].R
+steps = 0
+for direction_ in it.cycle(instructions.strip()):
+    # print(direction_)
+    steps += 1
+    if direction_ == 'L':
+        next_node = nodes[node].L
+    else:
+        next_node = nodes[node].R
     
-#     node = next_node
-#     if node == 'ZZZ':
-#         print(steps)
-#         break
+    node = next_node
+    if node == 'ZZZ':
+        print(f"Part 1: {steps}")
+        break
         
 
 # part 2
 
-p2_paths = {node: None for node in nodes if node.endswith('A')}
 p2 = [node for node in nodes if node.endswith('A')]
 
-# print(p2_paths)
-
-p2_total = 0
 def p2_runner(node):
     steps = 0
     for direction_ in it.cycle(instructions.strip()):
-        # print(direction_)
         steps += 1
         if direction_ == 'L':
             next_node = nodes[node].L
@@ -127,27 +115,11 @@ def p2_runner(node):
         
         node = next_node
         if node.endswith('Z'):
-            print(steps)
             return steps
 
-lcms = (p2_runner(node) for node in p2)
+lcms = [p2_runner(node) for node in p2]
 from math import lcm
-print(lcm(*lcms))
-# for direction_ in it.cycle(instructions.strip()):
-#     if direction_ == 'L':
-#         new_p2 = [nodes[node].L for node in p2]
-#     else:
-#         new_p2 = [nodes[node].R for node in p2]
-#     for node in p2:
-#         if not node.endswith('Z'):
-#             # print(node)
-#             break
-#     else: # no break
-#         print(p2_total)
-#         import sys;sys.exit()
-
-#     p2 = new_p2
-#     p2_total += 1
+print(f"Part 2: {lcm(*lcms)}")
 
 
 
