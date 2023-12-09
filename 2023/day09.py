@@ -98,7 +98,6 @@ def make_stack(seq):
 
 
 def part_1(stack):
-    stack = make_stack(stack)
     while stack:
         if DEBUG: print(stack)
         last = stack.pop()
@@ -111,13 +110,32 @@ def part_1(stack):
     if DEBUG: print(next_value)
     return next_value
 
-# part_1(make_stack(histories[1]))
-# sys.exit()
 
-p1 = 0
+def part_2(stack):
+    while stack:
+        if DEBUG: print(stack)
+        last = stack.pop()
+        try:
+            next_value = stack[-1][0] - last[0]
+            stack[-1].insert(0, next_value)
+        except IndexError:
+            break
+            pass
+    if DEBUG: print(next_value)
+    return next_value
+
+p2 = 0
 for his in histories:
-    p1 += part_1(his)
-print(p1)
+    stack = make_stack(his)
+    p2 += part_2(stack)
+print(p2)
+sys.exit()
+
+# p1 = 0
+# for his in histories:
+
+#     p1 += part_1(his)
+# print(p1)
 
 
 
