@@ -76,20 +76,13 @@ __start_time = perf_counter()
 
 inp = load_lines(filename)
 
-histories = []
-for line in inp:
-    histories.append([int(i) for i in line.split()])
-
+histories = [[int(i) for i in line.split()] for line in inp]
 
 def make_stack(seq):
     stack = []
     while True:
-        print(stack)
         stack.append(seq)
         if all(i == 0 for i in seq):
-            if DEBUG:
-                for l in stack:
-                    print(l)
             break
         else:
             seq = [b - a for a, b in zip(seq, seq[1:])]
@@ -99,43 +92,37 @@ def make_stack(seq):
 
 def part_1(stack):
     while stack:
-        if DEBUG: print(stack)
         last = stack.pop()
         try:
             next_value = stack[-1][-1] + last[-1]
             stack[-1].append(next_value)
         except IndexError:
             break
-            pass
-    if DEBUG: print(next_value)
     return next_value
 
 
 def part_2(stack):
     while stack:
-        if DEBUG: print(stack)
         last = stack.pop()
         try:
             next_value = stack[-1][0] - last[0]
             stack[-1].insert(0, next_value)
         except IndexError:
             break
-            pass
-    if DEBUG: print(next_value)
     return next_value
 
+
+p1 = 0
+for his in histories:
+    stack = make_stack(his)
+    p1 += part_1(stack)
+print(f"{p1=}")
 p2 = 0
 for his in histories:
     stack = make_stack(his)
     p2 += part_2(stack)
-print(p2)
-sys.exit()
+print(f"{p2=}")
 
-# p1 = 0
-# for his in histories:
-
-#     p1 += part_1(his)
-# print(p1)
 
 
 
