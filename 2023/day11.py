@@ -93,16 +93,10 @@ for row in galaxy:
 print()
 
 
-new_galaxy = []
-for row in galaxy:
+rows_to_expand = []
+for idx, row in enumerate(galaxy):
     if all(c == '.' for c in row):
-        new_galaxy.append(row[:])
-    new_galaxy.append(row[:])
-
-print('rows expanded')
-galaxy = new_galaxy
-for row in galaxy:
-    print(row, len(row))
+        rows_to_expand.append(idx)
 
 
 columns_to_expand = []
@@ -116,23 +110,6 @@ for col_idx in range(len(galaxy[0])):
 
 print(columns_to_expand)
 
-
-new_galaxy = []
-for row in galaxy:
-    new_row = []
-    for idx, c in enumerate(row):
-        new_row.append(c)
-        print(c, end='')
-        if idx in columns_to_expand:
-            new_row.append('.')
-            print('.', end='')
-    # print(f" {len(row)}")
-    print()
-    new_galaxy.append(new_row[:])
-    # print(''.join(new_row))
-
-galaxy = new_galaxy
-
 # WE DID IT
 
 coords = []
@@ -145,8 +122,16 @@ print()
 print(coords)
 
 
-def cartesian_distance(a: Point, b: Point):
+def cartesian_distance(a: Point, b: Point, expansion=1):
     distance = abs(a.r - b.r) + abs (a.c - b.c)
+    row_range = range(min(a.r, b.r), max(a.r, b.r))
+    col_range = range(min(a.c, b.c), max(a.c, b.c))
+    for i in row_range:
+        if i in rows_to_expand:
+            distance += expansion
+    for i in col_range:
+        if i in columns_to_expand:
+            distance += expansion
     return distance
 
 
@@ -156,6 +141,20 @@ for i, a in enumerate(coords):
         p1 += cartesian_distance(a,b)
 
 print(p1)
+
+p2 = 0
+            ### I ACTUALLY DON'T KNOW WHY THIS IS OFF BY ONE AHHHHHH
+for test in [9, 99, 999_999]:
+    p2 = 0
+    for i, a in enumerate(coords):
+        for i2, b in enumerate(coords[i+1:]):
+            # p2 += cartesian_distance(a,b, 1000000)
+            p2 += cartesian_distance(a,b, test)
+
+    print(test, p2)
+
+
+#### Part 2
 
 
 
