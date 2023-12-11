@@ -76,53 +76,22 @@ __start_time = perf_counter()
 
 inp = load_lines(filename)
 
+Point = namedtuple("point", "r c")
 
-Point = namedtuple("Point", "r c")
+# this is a reasonable list comprehension
+galaxy = [[c for c in line] for line in inp]
 
+# these list comprehensions are crimes against humanity
+rows_to_expand = [idx for idx, row in enumerate(galaxy) if all(c == '.' for c in row)]
+columns_to_expand = [idx for idx, col in enumerate(zip(*galaxy)) if col.count('#') == 0]
+coords = [Point(r, c) for c in range(len(galaxy[0])) for r in range(len(galaxy)) if galaxy[r][c] != '.']
 
-# galaxy = [c for c in [line for line in inp]]
-galaxy = []
-for line in inp:
-    row = []
-    for c in line:
-        row.append(c)
-    galaxy.append(row[:])
-print('original galaxy')
-for row in galaxy:
-    print(row)
-print()
+def cartesian_distance(a: Point, b: Point, expansion=2):
+    # part 1 expansion == double
+    # part 2 expansion == ????
+    # subtract 1 from expansion, as the first row is already accounted for
+    expansion -= 1
 
-
-rows_to_expand = []
-for idx, row in enumerate(galaxy):
-    if all(c == '.' for c in row):
-        rows_to_expand.append(idx)
-
-
-columns_to_expand = []
-for col_idx in range(len(galaxy[0])):
-    for row in galaxy:
-        if row[col_idx] != ".":
-            break
-    else:
-        # no break, we found a column with all
-        columns_to_expand.append(col_idx)
-
-print(columns_to_expand)
-
-# WE DID IT
-
-coords = []
-for r, row in enumerate(galaxy):
-    for c, char_ in enumerate(row):
-        if char_ != '.':
-            coords.append(Point(r,c))
-
-print()
-print(coords)
-
-
-def cartesian_distance(a: Point, b: Point, expansion=1):
     distance = abs(a.r - b.r) + abs (a.c - b.c)
     row_range = range(min(a.r, b.r), max(a.r, b.r))
     col_range = range(min(a.c, b.c), max(a.c, b.c))
@@ -134,27 +103,16 @@ def cartesian_distance(a: Point, b: Point, expansion=1):
             distance += expansion
     return distance
 
-
 p1 = 0
+p2 = 0
 for i, a in enumerate(coords):
     for i2, b in enumerate(coords[i+1:]):
-        p1 += cartesian_distance(a,b)
+        p1 += cartesian_distance(a, b)
+        p2 += cartesian_distance(a, b, 1_000_000)
 
-print(p1)
+print(f"{p1=}")
+print(f"{p2=}")
 
-p2 = 0
-            ### I ACTUALLY DON'T KNOW WHY THIS IS OFF BY ONE AHHHHHH
-for test in [9, 99, 999_999]:
-    p2 = 0
-    for i, a in enumerate(coords):
-        for i2, b in enumerate(coords[i+1:]):
-            # p2 += cartesian_distance(a,b, 1000000)
-            p2 += cartesian_distance(a,b, test)
-
-    print(test, p2)
-
-
-#### Part 2
 
 
 
