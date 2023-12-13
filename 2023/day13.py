@@ -97,26 +97,47 @@ def print_forest(m):
 
 
 
+def find_smudge_candidate(left, right):
+    l = ''.join(left)
+    r = ''.join(right)
+
+    smudge_candidates = [i for i, (lc, rc) in enumerate(zip(l, r)) if lc != rc]
+    if len(smudge_candidates) != 1:
+        return None
+    smudge_idx = smudge_candidates[0]
+    print(f"{smudge_idx=}")
+
+    return smudge_idx
 
 
 
-def find_candidates(m: list[list[str]]):
+def find_candidates(m: list[list[str]], part_2 = False):
     candidates = []
     for i, row in enumerate(m[:-1]):
         if row == m[i+1]:
             print('found potential', i)
             candidates.append(i)
+        
+        if part_2:
+            smudge_idx = find_smudge_candidate(row, m[i+1])
+            if smudge_idx is not None:
+                print("found potential smudge", i)
+                candidates.append(i)
     
     return candidates
 
 
-def find_reflections(m: list[list[str]], candidates: list[int]):
+def find_reflections(m: list[list[str]], candidates: list[int], part_2=False):
 
+    if part_2:
+        print('====================================== testing candidates:', candidates)
     for i in candidates:
         print('testing can:', i)
         left = i
         right = i + 1
         # print(left, right, len(m))
+
+        smudge_used = False
 
         while True:
             left -= 1
@@ -125,8 +146,28 @@ def find_reflections(m: list[list[str]], candidates: list[int]):
                 print('reflection found', i)
                 return i
             if m[left] != m[right]:
-                print('no reflection found')
-                break
+                if not part_2:
+                    print('no reflection found')
+                    break
+
+                if smudge_used:
+                    print('smudge already used')
+                    break
+
+                smudge_idx = find_smudge_candidate(m[left], m[right])
+                if smudge_idx is None:
+                    print('no smudge reflection found')
+                    break
+
+                smudge_used = True
+
+
+                # l = list(l)
+                # c = l[smudge_idx]
+                # l[smudge_idx] = '.' if c == '#' else '#'
+                # input()
+
+                # Try and smudge our lines
     else:
         return None
     
@@ -134,23 +175,73 @@ def find_reflections(m: list[list[str]], candidates: list[int]):
 
 
 
-def solve_forest(m):
+def solve_forest(m, v_or_h=None, p1idx=None, part_2=False):
     # horizontal
-    cans = find_candidates(m)
-    ref = find_reflections(m, cans)
+    cans = find_candidates(m, part_2=part_2)
+    if v_or_h == 'h':
+        print("H. Removing candidate: ", p1idx)
+        cans.remove(p1idx)
+    ref = find_reflections(m, cans, part_2=part_2)
+
     if ref is not None:
-        print(ref)
-        return 100 * (ref + 1)
+        print("***found horizontatl candidate:", ref)
+        return 'h', ref
     
     # vertical
     m = [r for r in zip(*m)]
-    cans = find_candidates(m)
-    ref = find_reflections(m, cans)
+    cans = find_candidates(m, part_2=part_2)
+    if v_or_h == 'v':
+        print("V. Removing candidate: ", p1idx)
+        cans.remove(p1idx)
+    ref = find_reflections(m, cans, part_2=part_2)
     if ref is not None:
+        print("***found vertical candidate:", ref)
         print(ref)
-        return ref + 1
+        return 'v', ref
     
     raise Exception("No reflection found")
+
+
+
+
+p1result = 0
+p2result = 0
+for m in maps:
+    print_forest(m)
+    direction, i = solve_forest(m)
+
+    if direction == 'h':
+        p1result += 100 * (i + 1)
+    else: # v
+        p1result += i + 1
+
+    print(f"Part 1 line found: {i}. Direction: {direction}")
+    # input()
+    
+    direction, i = solve_forest(m, direction, i, True)
+    if direction == 'h':
+        p2result += 100 * (i + 1)
+    else: # v
+        p2result += i + 1
+    print()
+
+print(p1result)
+print(p2result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # case = """
 # #.####.#..##..#
@@ -171,32 +262,6 @@ def solve_forest(m):
 # # refs = find_reflections(case, cans)
 # print(solve_forest(case))
 # input()
-
-
-
-p1 = 0
-for m in maps:
-    p1 += solve_forest(m)
-    print()
-
-print(p1)
-
-
-
-sys.exit()
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -262,14 +327,6 @@ sys.exit()
     
 
 
-
-
-
-p1 = 0
-for m in maps:
-    p1 += find_reflections(m)
-
-print(p1)
 
 
 
