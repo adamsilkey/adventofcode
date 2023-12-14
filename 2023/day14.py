@@ -89,7 +89,8 @@ EMPTY = '.'
 Point = namedtuple("Point", "r c")
 
 def rotate(system: list[list[str]]) -> list[list[str]]:
-    return [col for col in zip(*system)]
+    return list(zip(*system))[::-1]
+    # return [col for col in zip(*system)]
 
 def printmap(system):
     for row in system:
@@ -111,37 +112,103 @@ def slide(row: list[str]):
     new_row.pop()
     return new_row
 
+def perform_slide(system, rotations = 0):
+    for _ in range(rotations):
+        system = rotate(system)
+    # rotato = [col for col in zip(*system)]
+    system = [slide(row) for row in system]
+
+    for _ in range(4 - rotations):
+        system = rotate(system)
+    return system
+
 def slide_system(system):
-    rotato = rotate(system)
-    new_system = []
-    for row in rotato:
-        new_system.append(slide(row))
-    
-    printmap(new_system)
-    new_system = rotate(new_system)
-    print()
-    printmap(new_system)
-    new_system = rotate(new_system)
-    print()
-    printmap(new_system)
-    new_system = rotate(new_system)
-    print()
-    printmap(new_system)
+    # Slide North
+    system = perform_slide(system, rotations=1)
+    # print('--- north ---')
+    # printmap(system)
 
-    return new_system
+    # Slide West
+    system = perform_slide(system, rotations=0)
+    # print()
+    # print('--- west ---')
+    # printmap(system)
+
+    # Slide south
+    system = perform_slide(system, rotations=3)
+    # print()
+    # print('--- south ---')
+    # printmap(system)
+
+    # Slide East
+    system = perform_slide(system, rotations=2)
+    # print()
+    # print('--- east ---')
+    # printmap(system)
+
+    return system
 
 
+# print()
+# printmap(system)
+# print('-----------------------------')
+# system = slide_system(system)
+# print()
+# printmap(system)
+# print('-----------------------------')
+# system = slide_system(system)
+# print()
+# printmap(system)
+# print('-----------------------------')
+# system = slide_system(system)
+# print()
+# printmap(system)
+# print('-----------------------------')
+# system = slide_system(system)
+
+# import sys;sys.exit()
 
 def solve(system):
-    res = 0
-    for i, row in enumerate(system[::-1], 1):
-        print(row)
-        count = row.count(ROUND)
-        print(i, count)
-        res += count * i
+    seen = set()
+    values = dict()
+    start_of_cycle = None
+    cycle_length = None
+    for i in range(1_000_000_000):
+        system = slide_system(system)
+
+        s = ''
+        for row in system:
+            s += ''.join(row)
+        
+        if s in seen and start_of_cycle is None:
+            print("***** found start of cycle *****", i)
+            start_of_cycle = i
+            input()
+            seen.clear()
+        elif s in seen and cycle_length is None:
+            print("***** Found repeating cycle *****", i)
+            cycle_length = i - start_of_cycle
+            input()
+            break
+
+        seen.add(s)
+        res = 0
+        print('-------------')
+        for j, row in enumerate(system[::-1], 1):
+            # print(''.join(row))
+            count = row.count(ROUND)
+            # print(j, count)
+            res += count * j
     
-    print(res)
-    return res
+        values[i + 1] = res
+        print(i + 1, res)
+    # return res
+
+    print(f"{cycle_length=}")
+    print(f"{start_of_cycle=}")
+    target = (1_000_000_000 - start_of_cycle) % cycle_length
+    print(f"{target=}")
+    print(values[target + start_of_cycle - 1])
 
 p1system = slide_system(system)
 print()
