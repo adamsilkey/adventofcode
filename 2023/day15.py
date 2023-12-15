@@ -80,7 +80,7 @@ __start_time = perf_counter()
 inp = load_file(filename).split(',')
 
 
-def hash(s: str):
+def hash_(s: str):
     value = 0
     for c in s:
         c = ord(c)
@@ -92,13 +92,51 @@ def hash(s: str):
 
 p1 = 0
 for s in inp:
-    print(s)
-    print(hash(s))
-    p1 += hash(s)
+    p1 += hash_(s)
 
-print(p1)
+print(f"{p1=}")
+
+Label = namedtuple("Label", "name box op focal")
+
+labels: list[Label] = []
+for label in inp:
+    if '=' in label:
+        name = label[:-2]
+        op = label[-2]
+        focal = int(label[-1])
+    else:
+        name = label[:-1]
+        op = label[-1]
+        focal = None
+
+    labels.append(Label(name, hash_(name), op, focal))
+
+boxes = [[] for _ in range(256)]
+
+for label in labels:
+    if label.op == '=':
+        for idx, existing_label in enumerate(boxes[label.box]):
+            if existing_label[0] == label.name:
+                boxes[label.box][idx] = (label.name, label.focal)
+                break
+        else: # nobeak
+            boxes[label.box].append((label.name, label.focal))
+    else:
+        for idx, existing_label in enumerate(boxes[label.box]):
+            if existing_label[0] == label.name:
+                boxes[label.box].pop(idx)
+
+### focusing power
+p2 = 0
+for boxnum, box in enumerate(boxes):
+    for slotnum, slot in enumerate(box, start=1):
+        power = 1 + boxnum
+        power *= slotnum
+        power *= slot[1]
 
 
+        p2 += power
+print(f"{p2=}")
 
 
 
