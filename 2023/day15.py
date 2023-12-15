@@ -77,9 +77,26 @@ DEBUG = True
 __start_time = perf_counter()
 
 
-inp = load_lines(filename)
+inp = load_file(filename).split(',')
 
 
+def hash(s: str):
+    value = 0
+    for c in s:
+        c = ord(c)
+        value += c
+        value *= 17
+        value %= 256
+    
+    return value
+
+p1 = 0
+for s in inp:
+    print(s)
+    print(hash(s))
+    p1 += hash(s)
+
+print(p1)
 
 
 
