@@ -85,10 +85,6 @@ reports = []
 for line in inp:
     reports.append([int(i) for i in line.split()])
 
-
-# for line in reports:
-#     print(line)
-
 def goodline(line):
     increasing = None
     for i, value in enumerate(line[:-1], start=1):
@@ -110,42 +106,28 @@ def goodline(line):
             # not safe
             break
     else:
-        print('good')
         return True
     return False
 
-# print(p1)
 
 for line in reports:
-    print(line)
     bad = 0
     subset = []
     if goodline(line):
         p1 += 1
         p2 += 1
-        print('good')
         continue
     else:
         # build optional lines
         for i in range(len(line)):
             subline = line[::]
             subline.pop(i)
-            print(subline)
             if goodline(subline):
-                print('p2 good')
                 p2 += 1
                 break
 
 print(p1)
 print(p2)
-
-
-
-
-
-
-
-
 
 if test:
     print()
