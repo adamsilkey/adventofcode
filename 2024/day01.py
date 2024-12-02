@@ -76,10 +76,7 @@ DEBUG = True
 
 __start_time = perf_counter()
 
-
-# inp = load_file(filename).split(',')
 inp = load_lines(filename)
-# inp = load_ints(filename)
 
 left = []
 right = []
@@ -97,47 +94,19 @@ counter = Counter()
 for i in right:
     counter[i] += 1
 
-print(counter)
-
-# print(left)
-
 p1 = 0
 
 for i, a in enumerate(left):
     p1 += abs(a - right[i])
 
-print(p1)
+print(f"{p1=}")
 
-print("p2")
 p2 = 0
 for i in left:
     if i in counter:
         p2 += i * counter[i]
 
-print(p2)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(f"{p2=}")
 
 
 
