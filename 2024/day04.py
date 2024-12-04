@@ -168,11 +168,8 @@ class WordSearch:
 
         rowA = ''.join([nw, 'A', se])
         rowB = ''.join([ne, 'A', sw])
-        # print(r,c)
-        # print(rowA, rowB)
 
         if (rowA == 'MAS' or rowA == 'SAM') and (rowB == 'MAS' or rowB == 'SAM'):
-            # print(r,c)
             return True
 
         return False
@@ -188,18 +185,11 @@ class WordSearch:
 
 search = WordSearch(inp)
 
-# for line in search.grid:
-#     print(line)
-
 for r in range(search.height):
     for c in range(search.width):
         search.look_all_directions(Point(r,c))
 
-
-# print(search.p1)
-
 p1 = search.p1
-
 
 for r in range(search.height):
     for c in range(search.width):
