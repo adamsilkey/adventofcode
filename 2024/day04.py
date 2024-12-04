@@ -144,25 +144,67 @@ class WordSearch:
 
         return False
 
+    def get_char(self, point: Point, compasskey):
+        r = point.r + compass[compasskey].r
+        c = point.c + compass[compasskey].c
+
+        if self.inbounds(Point(r,c)):
+            return self.grid[r][c]
+        else:
+            return None
+
+    def mas_finder(self, point: Point):
+        if self.grid[point.r][point.c] != 'A':
+            return False
+
+        # get NW, NE, SW, SE
+        nw = self.get_char(point, 'NW')
+        ne = self.get_char(point, 'NE')
+        sw = self.get_char(point, 'SW')
+        se = self.get_char(point, 'SE')
+
+        if not all([nw, ne, sw, se]):
+            return False
+
+        rowA = ''.join([nw, 'A', se])
+        rowB = ''.join([ne, 'A', sw])
+        # print(r,c)
+        # print(rowA, rowB)
+
+        if (rowA == 'MAS' or rowA == 'SAM') and (rowB == 'MAS' or rowB == 'SAM'):
+            # print(r,c)
+            return True
+
+        return False
+
+
     def look_all_directions(self, point: Point):
 
         for k in compass.keys():
-            print(k)
+            # print(k)
             if self.look(point, k) == True:
                 self.p1 += 1
 
 
 search = WordSearch(inp)
 
-for line in search.grid:
-    print(line)
+# for line in search.grid:
+#     print(line)
 
 for r in range(search.height):
     for c in range(search.width):
         search.look_all_directions(Point(r,c))
 
 
-print(search.p1)
+# print(search.p1)
+
+p1 = search.p1
+
+
+for r in range(search.height):
+    for c in range(search.width):
+        if search.mas_finder(Point(r,c)):
+            p2 += 1
 
 
 
@@ -179,10 +221,8 @@ print(search.p1)
 
 
 
-
-
-# print(f"{p1=}")
-# print(f"{p2=}")
+print(f"{p1=}")
+print(f"{p2=}")
 
 if test:
     print()
