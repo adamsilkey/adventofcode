@@ -108,7 +108,6 @@ rules = dict()
 comprules = set()
 
 for line in raw_rules:
-    # print(line)
     a, _, b = line.partition('|')
     a = int(a)
     b = int(b)
@@ -119,48 +118,32 @@ for line in raw_rules:
 
     comprules.add((a,b))
 
-# for k, v in rules.items():
-#     print(k, v)
-
-# for line in printruns:
-#     print(line)
 
 bad_regexs = dict()
-# bad_regexs = []
 
 for k in rules:
     for v in rules[k]:
         bad_regexs[(k,v)] = re.compile(f"{v},.*{k}")
 
-# print(bad_regexs)
-
 badlines = []
 
 for line in printruns:
-    # print(line)
     rawline = ','.join([str(i) for i in line])
     for match in bad_regexs.values():
         if match.search(rawline):
-            # print("Bad!")
             badlines.append(line)
             break
     else:
         middle = line[len(line)//2]
-        # print(middle)
         p1 += middle
-    # rawline = ','.join(line)
-    # print(rawline)
-
 
 
 #=============== P2
 
 def compare(a, b):
-    print(a,b)
     if (a,b) in comprules:
         return -1
     elif (b,a) in comprules:
-        print('swap them!')
         return 1
     else:
         return 0
@@ -168,13 +151,8 @@ def compare(a, b):
 from functools import cmp_to_key
 
 for line in badlines:
-    print('===========')
-    print(line)
-    print("start sorting")
     line = sorted(line, key=cmp_to_key(compare))
-    print(line)
     middle = line[len(line)//2]
-    print(middle)
     p2 += middle
 
 
