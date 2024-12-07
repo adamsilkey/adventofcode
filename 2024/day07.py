@@ -101,15 +101,14 @@ for line in inp:
     a, _, b = line.partition(':')
     data[int(a)] = [int(n) for n in b.strip().split()]
 
+p1operators = '*+'
+p2operators = '*+|'
 
-possible = 0
-match = 0
-notpossible = 0
 for k, v in data.items():
     print(k, v)
 
     l = len(v) - 1
-    combinations = [s for s in it.product('*+', repeat=l)]
+    combinations = [s for s in it.product(p2operators, repeat=l)]
 
     for combo in combinations:
         combo = [c for c in combo]
@@ -125,9 +124,11 @@ for k, v in data.items():
                 n *= next
             elif op == '+':
                 n += next
+            elif op == '|':
+                n = int(f"{n}{next}")
 
         if k == n:
-            print('found one')
+            # print('found one')
             p1 += n
             break
 
