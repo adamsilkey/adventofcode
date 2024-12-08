@@ -173,17 +173,79 @@ class Map:
             b2r = b.r + dr
             b2c = b.c - dc
         else:
-            # print(a.c, b.c)
-            # print(type(a.c), type(b.c))
-            # if b.c > a.c:
-            #     print("yes???")
-            # else:
-            #     print("wtf")
-            # print(b.c > a.c)
-            # print(f"{a=}, {b=}")
             raise("shouldn't have happened")
 
         return Point(a2r, a2c), Point(b2r, b2c)
+
+
+    def find_antinode_vectors(self, a: Point, b: Point):
+        dr = abs(a.r - b.r)
+        dc = abs(a.c - b.c)
+
+        # standardize
+        if a.r > b.r:
+            a, b = b, a
+
+        # If a is east of b and same row
+        elif a.c > b.c and a.r == b.r:
+            a, b = b, a
+
+        # cases
+        # a is n of b
+        if a.r == b.r:
+            a2dr = -dr
+            a2dc = 0
+            b2dr = dr
+            b2dc = 0
+        # a is w of b
+        elif a.c == b.c:
+            a2dr = 0
+            a2dc = -dc
+            b2dr = 0
+            b2dc = dc
+        # a is nw of b
+        elif a.c < b.c:
+            a2dr = -dr
+            a2dc = -dc
+            b2dr = dr
+            b2dc = dc
+        # a is ne of b
+        elif a.c > b.c:
+            a2dr = -dr
+            a2dc = dc
+            b2dr = dr
+            b2dc = -dc
+        else:
+            raise("shouldn't have happened")
+
+        return a, b, a2dr, a2dc, b2dr, b2dc
+
+    def find_all_antinode_vectors(self):
+        for k, v in self.nodes.items():
+            for node_pair in it.permutations(v, r=2):
+                a, b, a2dr, a2dc, b2dr, b2dc = self.find_antinode_vectors(node_pair[0], node_pair[1])
+
+                self.antinodes.add(a)
+                self.antinodes.add(b)
+
+                ainbounds = True
+                binbounds = True
+
+                while ainbounds or binbounds:
+                    a = Point(a.r + a2dr, a.c + a2dc)
+                    b = Point(b.r + b2dr, b.c + b2dc)
+
+                    if self.inbounds(a):
+                        self.antinodes.add(a)
+                    else:
+                        ainbounds = False
+
+                    if self.inbounds(b):
+                        self.antinodes.add(b)
+                    else:
+                        binbounds = False
+
+        return(len(self.antinodes))
 
     def find_all_antinodes(self):
         for k, v in self.nodes.items():
@@ -199,8 +261,6 @@ class Map:
                     self.antinodes.add(b)
 
         return(len(self.antinodes))
-
-
 
     def map_debug(self):
         map = []
@@ -239,6 +299,23 @@ print('''============
 ..........#.
 ..........#.''')
 
+print('=============================')
+
+p2 = map.find_all_antinode_vectors()
+map.map_debug()
+print('''============
+##....#....#
+.#.#....0...
+..#.#0....#.
+..##...0....
+....0....#..
+.#...#A....#
+...#..#.....
+#....#.#....
+..#.....A...
+....#....A..
+.#........#.
+...#......## ''')
 
 
 
