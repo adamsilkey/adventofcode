@@ -104,34 +104,40 @@ for line in inp:
 p1operators = '*+'
 p2operators = '*+|'
 
-for k, v in data.items():
-    print(k, v)
+def run(operators):
+    res = 0
+    for k, v in data.items():
+        print(k, v)
 
-    l = len(v) - 1
-    combinations = [s for s in it.product(p2operators, repeat=l)]
+        l = len(v) - 1
+        combinations = [s for s in it.product(operators, repeat=l)]
 
-    for combo in combinations:
-        combo = [c for c in combo]
-        combo.append('+')
-        test = deque([c for items in zip(v, combo) for c in items])
-        test.append(0)
+        for combo in combinations:
+            combo = [c for c in combo]
+            combo.append('+')
+            test = deque([c for items in zip(v, combo) for c in items])
+            test.append(0)
 
-        n = test.popleft()
-        while test:
-            op = test.popleft()
-            next = test.popleft()
-            if op == '*':
-                n *= next
-            elif op == '+':
-                n += next
-            elif op == '|':
-                n = int(f"{n}{next}")
+            n = test.popleft()
+            while test:
+                op = test.popleft()
+                next = test.popleft()
+                if op == '*':
+                    n *= next
+                elif op == '+':
+                    n += next
+                elif op == '|':
+                    n = int(f"{n}{next}")
 
-        if k == n:
-            # print('found one')
-            p1 += n
-            break
+            if k == n:
+                res += n
+                break
 
+    return res
+
+
+p1 = run(p1operators)
+p2 = run(p2operators)
 
 
 
