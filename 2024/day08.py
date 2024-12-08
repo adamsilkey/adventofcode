@@ -133,92 +133,16 @@ class Map:
             return False
 
     def find_antinodes(self, a: Point, b: Point):
-        dr = abs(a.r - b.r)
-        dc = abs(a.c - b.c)
+        dr = a.r - b.r
+        dc = a.c - b.c
 
-        # standardize
-        if a.r > b.r:
-            # print('standardzin')
-            a, b = b, a
-
-        # If a is east of b and same row
-        elif a.c > b.c and a.r == b.r:
-            a, b = b, a
-        print(a, b)
-
-        # cases
-        # a is n of b
-        if a.r == b.r:
-            a2r = a.r - dr
-            a2c = a.c
-            b2r = b.r + dr
-            b2c = b.c
-        # a is w of b
-        elif a.c == b.c:
-            a2r = a.r
-            a2c = a.c - dc
-            b2r = b.r
-            b2c = b.c + dc
-        # a is nw of b
-        elif a.c < b.c:
-            # print(dr, dc)
-            a2r = a.r - dr
-            a2c = a.c - dc
-            b2r = b.r + dr
-            b2c = b.c + dc
-        # a is ne of b
-        elif a.c > b.c:
-            a2r = a.r - dr
-            a2c = a.c + dc
-            b2r = b.r + dr
-            b2c = b.c - dc
-        else:
-            raise("shouldn't have happened")
-
-        return Point(a2r, a2c), Point(b2r, b2c)
-
+        return Point(a.r + dr, a.c + dc), Point(b.r - dr, b.c - dc)
 
     def find_antinode_vectors(self, a: Point, b: Point):
-        dr = abs(a.r - b.r)
-        dc = abs(a.c - b.c)
+        dr = a.r - b.r
+        dc = a.c - b.c
 
-        # standardize
-        if a.r > b.r:
-            a, b = b, a
-
-        # If a is east of b and same row
-        elif a.c > b.c and a.r == b.r:
-            a, b = b, a
-
-        # cases
-        # a is n of b
-        if a.r == b.r:
-            a2dr = -dr
-            a2dc = 0
-            b2dr = dr
-            b2dc = 0
-        # a is w of b
-        elif a.c == b.c:
-            a2dr = 0
-            a2dc = -dc
-            b2dr = 0
-            b2dc = dc
-        # a is nw of b
-        elif a.c < b.c:
-            a2dr = -dr
-            a2dc = -dc
-            b2dr = dr
-            b2dc = dc
-        # a is ne of b
-        elif a.c > b.c:
-            a2dr = -dr
-            a2dc = dc
-            b2dr = dr
-            b2dc = -dc
-        else:
-            raise("shouldn't have happened")
-
-        return a, b, a2dr, a2dc, b2dr, b2dc
+        return a, b, dr, dc, -dr, -dc
 
     def find_all_antinode_vectors(self):
         for k, v in self.nodes.items():
@@ -264,9 +188,6 @@ class Map:
 
     def map_debug(self):
         map = []
-        # for h in range(self.height):
-        #     s = ['.'] * self.width
-        #     map.append(s)
         for row in self.rawmap:
             map.append([c for c in row])
 
@@ -285,37 +206,11 @@ map = Map(inp)
 p1 = map.find_all_antinodes()
 map.map_debug()
 
-print('''============
-......#....#
-...#....0...
-....#0....#.
-..#....0....
-....0....#..
-.#....A.....
-...#........
-#......#....
-........A...
-.........A..
-..........#.
-..........#.''')
-
 print('=============================')
 
 p2 = map.find_all_antinode_vectors()
 map.map_debug()
-print('''============
-##....#....#
-.#.#....0...
-..#.#0....#.
-..##...0....
-....0....#..
-.#...#A....#
-...#..#.....
-#....#.#....
-..#.....A...
-....#....A..
-.#........#.
-...#......## ''')
+
 
 
 
