@@ -235,6 +235,35 @@ class Map:
         print(p1)
         return p1
 
+    def trailrating(self, point: Point, top=None):
+        if top is None:
+            top = []
+
+        current_level = self.grid[point]
+
+        if current_level == 9:
+            top.append(point)
+            return top
+
+        for d in ['N', 'E', 'S', 'W']:
+            r, c = point.check(d)
+            next_point = Point(r, c)
+
+            if self.inbounds(next_point) and self.grid[next_point] == current_level + 1:
+                top = self.trailrating(next_point, top)
+
+        return top
+
+    def p2search(self):
+        p2 = 0
+        for point, n in self.grid.items():
+            if n == 0:
+                p2 += len(self.trailrating(point))
+
+        print(p2)
+        return p2
+
+
 
 
 
@@ -244,6 +273,7 @@ map = Map(inp)
 
 p1 = map.p1search()
 
+p2 = map.p2search()
 
 
 
