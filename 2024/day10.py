@@ -119,9 +119,7 @@ class Point:
         return f"({self.r},{self.c})"
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.r == other.r and self.c == other.c
-        return False
+        return isinstance(other, self.__class__) and self.r == other.r and self.c == other.c
 
     def __hash__(self):
         return hash((self.r, self.c))
