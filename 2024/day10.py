@@ -158,14 +158,6 @@ class Map:
             for c, char in enumerate(row):
                 self.grid[Point(r,c)] = int(char)
 
-
-        for k, v in self.grid.items():
-            if k == Point(0,3):
-                print(k, v)
-                print(k in self.grid)
-                print(k.__hash__())
-                break
-
         self.height = len(grid)
         self.width = len(grid[0])
 
