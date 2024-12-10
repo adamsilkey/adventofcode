@@ -207,34 +207,6 @@ class Map:
             print(''.join(row))
 
 
-    def dfs(self, point: Point, top=None):
-        if top is None:
-            top = set()
-
-        current_level = self.grid[point]
-
-        if current_level == 9:
-            top.add(point)
-            return top
-
-        for d in ['N', 'E', 'S', 'W']:
-            r, c = point.check(d)
-            next_point = Point(r, c)
-
-            if self.inbounds(next_point) and self.grid[next_point] == current_level + 1:
-                top = self.dfs(next_point, top)
-
-        return top
-
-    def p1search(self):
-        p1 = 0
-        for point, n in self.grid.items():
-            if n == 0:
-                p1 += len(self.dfs(point))
-
-        print(p1)
-        return p1
-
     def trailrating(self, point: Point, top=None):
         if top is None:
             top = []
@@ -254,27 +226,23 @@ class Map:
 
         return top
 
-    def p2search(self):
+    def heads_and_trails(self):
+        p1 = 0
         p2 = 0
         for point, n in self.grid.items():
             if n == 0:
-                p2 += len(self.trailrating(point))
+                trails = self.trailrating(point)
+                p1 += len(set(trails))
+                p2 += len(trails)
 
-        print(p2)
-        return p2
-
-
-
+        return p1, p2
 
 
 inp = load_file(filename)
 
 map = Map(inp)
 
-p1 = map.p1search()
-
-p2 = map.p2search()
-
+p1, p2 = map.heads_and_trails()
 
 
 
