@@ -141,18 +141,7 @@ class Point:
 
         dr, dc = self.COMPASS[d]
 
-        return self.r + dr, self.c + dc
-
-
-# a = Point(1,3)
-# b = Point(1,3)
-
-# print(a.__hash__())
-# print(b.__hash__())
-# input()
-
-
-
+        return self.__class__(self.r + dr, self.c + dc)
 
 
 class Map:
@@ -216,8 +205,7 @@ class Map:
             return top
 
         for d in ['N', 'E', 'S', 'W']:
-            r, c = point.check(d)
-            next_point = Point(r, c)
+            next_point = point.check(d)
 
             if self.inbounds(next_point) and self.grid[next_point] == current_level + 1:
                 top = self.trailrating(next_point, top)
