@@ -201,78 +201,9 @@ class Map:
         return p1, p2
 
 
-
-
-
-
-inp = load_file(filename)
-
-
-
-
-
-'''
-If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
-
-If the stone is engraved with a number that has an even number of digits, it is replaced by two stones.
-The left half of the digits are engraved on the new left stone, and the right half of the digits are engraved
-on the new right stone. (The new numbers don't keep extra leading zeroes: 1000 would become stones 10 and 0.)
-
-If none of the other rules apply, the stone is replaced by a new stone; the old stone's number multiplied by 2024 is engraved on the new stone.
-'''
-
-
-
-
-
-inp = inp.split()
-inp = deque([int(c) for c in inp])
-
-inp = deque(sorted([int(c) for c in inp]))
-
-
-
-def blink(l: deque[int]):
-
-    newl = deque()
-
-    for n in l:
-        ns = str(n)
-
-        if n == 0:
-            n = 1
-            newl.append(n)
-        elif len(ns) % 2 == 0:
-            half = len(ns) // 2
-            a = int(ns[:half])
-            b = int(ns[half:])
-            newl.append(a)
-            newl.append(b)
-        else:
-            n *= 2024
-            newl.append(n)
-
-    return newl
-
-
-
-if False:
-    d = inp
-    for i in range(25):
-        d = blink(d)
-        print(f"{i+1}: {len(d)}")
-        # input()
-
-    p1 = len(d)
-
-# input()
-
-############## P2
-
 inp = load_file(filename)
 inp = [int(c) for c in inp.split()]
 
-# inp = [0]
 
 def blink_rule(n):
     rules = []
@@ -305,15 +236,12 @@ for c in inp:
 def better_blink(count: dict[int, int]):
     new_count = count.copy()
     for key, v in count.items():
-        # print(f"{key=}, {v=}")
         if key not in rules:
-            '''figure the rules'''
+            # figure the rules out
             rules[key] = blink_rule(key)
 
-        # applythe rules
+        # apply the rules
         n = count[key]
-        # if key == 0:
-        #     print(n)
         new_count[key] -= n
         for num_to_increase in rules[key]:
             if num_to_increase not in new_count:
@@ -322,70 +250,19 @@ def better_blink(count: dict[int, int]):
 
     return new_count
 
-
-
-# def better_blink(count: dict[int, int]):
-#     new_count = count.copy()
-#     if new_count != count:
-#         raise('huh?')
-#     for key in count:
-#         if key not in rules:
-#             rules[key] = blink_rule(key)
-
-#         # apply the rules to the new_count
-#         num_to_add_or_subtract = count[key]
-
-
-
-
-
 def blinksum(count: dict[int, int]):
     return sum([n for n in count.values()])
 
-
-
 for i in range(1, 76):
     count = better_blink(count)
-    # print(f"{i}: {blinksum(count)}: {count}")
-    print(f"{i}: {blinksum(count)}")
-    # print(f"{rules=}")
-    # input()
+    if i == 25:
+        p1 = blinksum(count)
+    if i == 75:
+        p2 = blinksum(count)
+    # print(f"{i}: {blinksum(count)}")
 
 
-
-
-# d = inp
-# d = deque([0])
-
-# print(f"0: {len(d)}: {d}")
-# for i in range(75):
-#     d = blink(d)
-#     print(f"{i+1}: {len(d)}: {d}")
-#     # print(f"{i+1}: {len(d)}")
-#     input()
-
-# p2 = len(d)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(len(rules))
 
 print(f"{p1=}")
 print(f"{p2=}")
