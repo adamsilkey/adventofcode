@@ -228,9 +228,7 @@ If none of the other rules apply, the stone is replaced by a new stone; the old 
 inp = inp.split()
 inp = deque([int(c) for c in inp])
 
-# inp = deque(sorted([int(c) for c in inp]))
-# inp = deque(inp)
-
+inp = deque(sorted([int(c) for c in inp]))
 
 
 
