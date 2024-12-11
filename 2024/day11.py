@@ -256,7 +256,7 @@ def blink(l: deque[int]):
 
 
 
-if True:
+if False:
     d = inp
     for i in range(25):
         d = blink(d)
@@ -265,35 +265,91 @@ if True:
 
     p1 = len(d)
 
+# input()
+
+############## P2
+
+inp = load_file(filename)
+inp = [int(c) for c in inp.split()]
+
+# inp = [0]
+
+def blink_rule(n):
+    rules = []
+    ns = str(n)
+
+    if n == 0:
+        n = 1
+        rules.append(n)
+    elif len(ns) % 2 == 0:
+        half = len(ns) // 2
+        a = int(ns[:half])
+        b = int(ns[half:])
+        rules.append(a)
+        rules.append(b)
+    else:
+        n *= 2024
+        rules.append(n)
+
+    return rules
+
+
+rules = dict()
+count = dict()
+for c in inp:
+    if c not in count:
+        count[c] = 0
+    count[c] += 1
+
+
+def better_blink(count: dict[int, int]):
+    new_count = count.copy()
+    for key, v in count.items():
+        # print(f"{key=}, {v=}")
+        if key not in rules:
+            '''figure the rules'''
+            rules[key] = blink_rule(key)
+
+        # applythe rules
+        n = count[key]
+        # if key == 0:
+        #     print(n)
+        new_count[key] -= n
+        for num_to_increase in rules[key]:
+            if num_to_increase not in new_count:
+                new_count[num_to_increase] = 0
+            new_count[num_to_increase] += n
+
+    return new_count
+
+
+
+# def better_blink(count: dict[int, int]):
+#     new_count = count.copy()
+#     if new_count != count:
+#         raise('huh?')
+#     for key in count:
+#         if key not in rules:
+#             rules[key] = blink_rule(key)
+
+#         # apply the rules to the new_count
+#         num_to_add_or_subtract = count[key]
 
 
 
 
-# rules = dict()
-# count = Counter()
 
-# # def better_blink(deq: deque[int]):
-# #     for n in deque
+def blinksum(count: dict[int, int]):
+    return sum([n for n in count.values()])
 
-# def blink_rule(n):
-#     rules = []
-#     ns = str(n)
 
-#     if n == 0:
-#         n = 1
-#         rules.append(n)
-#     elif len(ns) % 2 == 0:
-#         half = len(ns) // 2
-#         a = int(ns[:half])
-#         b = int(ns[half:])
-#         rules.append(a)
-#         rules.append(b)
-#     else:
-#         n *= 2024
-#         rules.append(n)
 
-#     return rules
-
+for i in range(1, 76):
+    count = better_blink(count)
+    # print(f"{i}: {blinksum(count)}: {count}")
+    print(f"{i}: {blinksum(count)}")
+    # print(f"{rules=}")
+    # input()
 
 
 
