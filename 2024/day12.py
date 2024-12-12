@@ -219,17 +219,18 @@ class Map:
         queue = deque([point])
         plot = set() #aka visited
         seen = set()
+        sides = dict()
         perimeter = set()
         veggie = self.grid[point]
 
         while queue:
             point = queue.popleft()
-            print(f"Checking {point}")
+            # print(f"Checking {point}")
             plot.add(point)
 
             for d in Point.CARDINAL:
-                if point == Point(2,2) and d == 'W':
-                    print('what the FUUUUUUCK')
+                # if point == Point(2,2) and d == 'W':
+                #     print('what the FUUUUUUCK')
                 np = point.check(d)
                 perimeter_key = (np, d)
                 if np in plot or perimeter_key in perimeter or perimeter_key in seen:
@@ -239,15 +240,28 @@ class Map:
                 seen.add(perimeter_key)
 
                 if not self.inbounds(np) or not self.grid[np] == veggie:
-                    print(np)
-                    try:
-                        print(f"differnet plot found: {self.grid[np]}")
-                    except KeyError:
-                        print("ou of bounds")
+                    # print(np)
+                    # try:
+                    #     print(f"differnet plot found: {self.grid[np]}")
+                    # except KeyError:
+                    #     print("ou of bounds")
 
                     perimeter.add(perimeter_key) ## Need to add both the node and the direction we're looking
-                    print(f"perimeter: {perimeter_key}")
+                    # print(f"perimeter: {perimeter_key}")
                     # input()
+
+                    ## Add sides
+                    if d in ['N', 'S']:
+                        key = (np.r, d)
+                        if key not in sides:
+                            sides[key] = []
+                        sides[key].append(np.c)
+                    elif d in ['E', 'W']:
+                        key = (np.c, d)
+                        if key not in sides:
+                            sides[key] = []
+                        sides[key].append(np.r)
+
                     continue
 
                 if np not in plot:
@@ -256,20 +270,34 @@ class Map:
                 else:
                     raise('uh wat')
 
-        print(f"Veggie: {veggie}. Area: {len(plot)}. Perimeter: {len(perimeter)}")
-        return plot, perimeter
+        # Just go over it a second time
+        total_sides = 0
+        for k, v in sides.items():
+            total_sides += 1
+            print(k)
+            v.sort()
+            i = v.pop()
+            while v:
+                n = v.pop()
+                if i - n > 1:
+                    total_sides += 1
+                i = n
 
-    def part1(self):
-        p1 = 0
+        print(f"Veggie: {veggie}. Area: {len(plot)}. Perimeter: {len(perimeter)}. Sides: {total_sides}")
+        return plot, perimeter, total_sides
+
+    def run(self):
+        p1 = p2 = 0
         visited = set()
         for k, v in self.grid.items():
             if k not in visited:
                 print(f"Looking at a plot of land! {k}: {v}")
-                plot, perimeter = self.bfs(k)
+                plot, perimeter, sides = self.bfs(k)
                 p1 += len(plot) * len(perimeter)
+                p2 += len(plot) * sides
                 visited |= plot
 
-        return p1
+        return p1, p2
 
 
 
@@ -281,7 +309,7 @@ inp = load_file(filename)
 
 map = Map(inp)
 
-p1 = map.part1()
+p1, p2 = map.run()
 
 
 
