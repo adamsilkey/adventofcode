@@ -187,35 +187,7 @@ class Map:
         for row in map:
             print(''.join(row))
 
-
-    # def find_garden_plot(self, point: Point, veggie: str = None, plot: set = None, perimeter: int = None):
-    #     # Base case
-    #     if plot is None:
-    #         plot = set()
-    #     if perimeter is None:
-    #         perimeter = 0
-    #     if veggie is None:
-    #         veggie = self.grid[point]
-
-    #     # add point to plot
-    #     self.plot.add(point)
-
-    #     check_next = set()
-
-    #     for d in Point.CARDINAL:
-    #         next_point = point.check(d)
-
-    #         if next_point in self.plot:
-    #             continue
-
-    #         if self.inbounds(next_point) and self.grid[next_point] == veggie:
-    #             if next_point not in self.plot:
-    #                 check_next.add(next_point)
-    #         else:
-    #             perimeter += 1
-
     def bfs(self, point: Point):
-
         queue = deque([point])
         plot = set() #aka visited
         seen = set()
@@ -225,14 +197,11 @@ class Map:
 
         while queue:
             point = queue.popleft()
-            # print(f"Checking {point}")
             plot.add(point)
 
-            for d in Point.CARDINAL:
-                # if point == Point(2,2) and d == 'W':
-                #     print('what the FUUUUUUCK')
+            for d in Point.CARDINAL: # N, E, S, W
                 np = point.check(d)
-                perimeter_key = (np, d)
+                perimeter_key = (np, d) ## Need to add both the node and the direction we're looking
                 if np in plot or perimeter_key in perimeter or perimeter_key in seen:
                     continue
 
@@ -240,17 +209,9 @@ class Map:
                 seen.add(perimeter_key)
 
                 if not self.inbounds(np) or not self.grid[np] == veggie:
-                    # print(np)
-                    # try:
-                    #     print(f"differnet plot found: {self.grid[np]}")
-                    # except KeyError:
-                    #     print("ou of bounds")
+                    perimeter.add(perimeter_key)
 
-                    perimeter.add(perimeter_key) ## Need to add both the node and the direction we're looking
-                    # print(f"perimeter: {perimeter_key}")
-                    # input()
-
-                    ## Add sides
+                    ## Add sides for Part 2
                     if d in ['N', 'S']:
                         key = (np.r, d)
                         if key not in sides:
@@ -265,16 +226,14 @@ class Map:
                     continue
 
                 if np not in plot:
-                    # print(f'adding to queue: {np}')
                     queue.append(np)
                 else:
                     raise('uh wat')
 
-        # Just go over it a second time
+        # Count sides for Part 2
         total_sides = 0
-        for k, v in sides.items():
+        for v in sides.values():
             total_sides += 1
-            print(k)
             v.sort()
             i = v.pop()
             while v:
@@ -283,7 +242,6 @@ class Map:
                     total_sides += 1
                 i = n
 
-        print(f"Veggie: {veggie}. Area: {len(plot)}. Perimeter: {len(perimeter)}. Sides: {total_sides}")
         return plot, perimeter, total_sides
 
     def run(self):
@@ -291,7 +249,6 @@ class Map:
         visited = set()
         for k, v in self.grid.items():
             if k not in visited:
-                print(f"Looking at a plot of land! {k}: {v}")
                 plot, perimeter, sides = self.bfs(k)
                 p1 += len(plot) * len(perimeter)
                 p2 += len(plot) * sides
